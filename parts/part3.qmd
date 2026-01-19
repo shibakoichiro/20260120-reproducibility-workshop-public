@@ -1,0 +1,342 @@
+---
+title: "Part 3: Quarto Basics"
+subtitle: "Create your first reproducible document"
+---
+
+## Learning Goals
+
+By the end of this section, you will:
+
+- Create a Quarto document (`.qmd`)
+- Write YAML headers, Markdown text, and R code chunks
+- Render documents to HTML
+- Understand code chunk options
+
+## What is Quarto?
+
+Quarto lets you write **code and text in one document**:
+
+- Write your analysis and explanation together
+- Render to HTML, PDF, Word, and more
+- Plain text format = version control friendly, AI friendly
+
+Think of it as a Word document that can run R code and automatically update results.
+
+```{mermaid}
+flowchart LR
+    A[".qmd file"] --> B["Quarto Engine"]
+    B --> C["HTML"]
+    B --> D["PDF"]
+    B --> E["Word"]
+
+    style A fill:#e1f5fe
+    style B fill:#fff3e0
+```
+
+## Anatomy of a .qmd File
+
+A Quarto document has three main parts:
+
+1. **YAML Header** — Settings at the top between `---` marks. Controls title, format, options.
+2. **Markdown Text** — Your narrative writing using simple formatting syntax.
+3. **Code Chunks** — R code blocks that execute when you render.
+
+**Example structure:**
+
+````markdown
+---
+title: "My Analysis"
+format: html
+---
+
+This is my analysis. Here are the results:
+
+```{{r}}
+mean(c(1, 2, 3, 4, 5))
+```
+````
+
+## Hands-on Exercise
+
+::: {.step-card}
+#### Step 1: Open `data-cleaning.qmd`
+
+1. Open `data-cleaning.qmd` from the Files pane
+2. Look at the file structure—it already has YAML header, text sections, and code chunks
+
+This is a **scaffold file** we've prepared. Your job is to fill in the code.
+:::
+
+::: {.step-card}
+#### Step 2: Update the YAML header
+
+Find the YAML header at the top and change `YOUR NAME` to your actual name:
+
+```yaml
+---
+title: "Data Cleaning"
+author: "Your Name"
+date: today
+format: html
+---
+```
+:::
+
+::: {.step-card}
+#### Step 3: Add code to load the data
+
+**Goal:** Load the NHANES dataset and preview its structure.
+
+Find the `load-data` chunk and add this code:
+
+```{.r filename="data-cleaning.qmd"}
+#| label: load-data
+
+# Load the NHANES package (contains the dataset we'll use)
+library(NHANES)
+
+# Load the NHANES data into our R environment
+data("NHANES")
+
+# Preview the first few rows to understand the data structure
+head(NHANES)
+```
+
+**What this does:** The NHANES package includes built-in survey data, so we don't need to download a separate file. The `head()` function shows the first 6 rows, helping us understand what variables are available.
+:::
+
+::: {.step-card}
+#### Step 4: Clean the data
+
+**Goal:** Prepare a clean, analysis-ready dataset by selecting variables, filtering rows, and handling missing data.
+
+Find the `clean-data` chunk and add this code:
+
+```{.r filename="data-cleaning.qmd"}
+#| label: clean-data
+
+# Clean the NHANES data for our analysis
+data_clean <- NHANES |>
+  # Keep only the variables we need for this analysis
+  select(ID, Age, Gender, Race1, Education, BPSysAve, BMI, Weight) |>
+  # Restrict to adults (children have different BP norms)
+  filter(Age >= 20) |>
+  # Remove rows with any missing values (complete case analysis)
+  drop_na() |>
+  # Set education levels in logical order (for proper ordering in plots/tables)
+  mutate(
+    Education = factor(Education, levels = c(
+      "8th Grade", "9 - 11th Grade", "High School",
+      "Some College", "College Grad"
+    ))
+  )
+
+# Check the result: how many rows and columns?
+dim(data_clean)
+
+# Preview the cleaned data
+head(data_clean)
+```
+
+**What this does:**
+
+- `select()` — Keep only the 8 variables we need (reduces noise)
+- `filter()` — Restrict to adults age 20+ (our target population)
+- `drop_na()` — Remove incomplete rows (simple but transparent approach)
+- `mutate()` — Order education levels logically (8th Grade → College Grad)
+:::
+
+::: {.step-card}
+#### Step 5: Save the cleaned data
+
+**Goal:** Export the cleaned dataset so other scripts can use it without re-running all the cleaning code.
+
+Find the `save-data` chunk and add this code:
+
+```{.r filename="data-cleaning.qmd"}
+#| label: save-data
+
+# Create results folder if it doesn't exist yet
+dir.create(here("results"), showWarnings = FALSE)
+
+# Save the cleaned data to the results folder
+# Other scripts will load this file instead of re-running data cleaning
+saveRDS(data_clean, here("results", "data_clean.rds"))
+```
+
+**What this does:**
+
+- `dir.create()` — Creates the `results/` folder if it doesn't exist (safe to run multiple times)
+- `saveRDS()` — Saves our R object to a file. Later scripts can load it with `readRDS()`
+
+::: {.callout-note}
+## Why `here()`?
+The `here()` function builds file paths relative to your **project root** (automatically detected via `.git` folder, `.Rproj`, or `.here` file). This matters for reproducibility:
+
+- Your script works regardless of working directory
+- Collaborators can run your code without changing paths
+- No more `setwd()` or broken absolute paths like `/Users/yourname/...`
+:::
+
+**Why `.rds` format?**
+
+- Preserves R data types (factors, dates, attributes) perfectly
+- Other scripts don't need to repeat the cleaning steps
+- Creates a clear handoff point between data preparation and analysis
+:::
+
+::: {.step-card}
+#### Step 6: Run chunks interactively
+
+Click the **green play button** (▶) on the right side of each chunk, or:
+
+- **Ctrl+Enter** / **Cmd+Enter** — Run current line
+- **Ctrl+Shift+Enter** / **Cmd+Shift+Enter** — Run entire chunk
+
+Run all chunks in order: setup → load-data → clean-data → save-data
+
+**Tip:** Create new chunks with **Ctrl+Alt+I** (Windows) / **Cmd+Option+I** (Mac)
+:::
+
+::: {.callout-note}
+## About Rendering in Your Project
+
+Your template has a `_quarto.yml` file that configures the project as a "Quarto Manuscripts" project. This is intentional!
+
+**What this means:**
+
+- When you click "Render" on a single .qmd file, **the entire project builds**
+- This is normal behavior for Manuscripts projects
+- The setup enables the `embed` feature you'll use in Part 6
+
+**Recommended workflow during development:**
+
+1. **Run chunks interactively** (green play button) to develop and test code
+2. **Render** when you want to see the formatted HTML output
+
+Interactive execution is faster for development; Render is for final output.
+:::
+
+::: {.step-card}
+#### Step 7: Render the document
+
+1. Save your file (**Ctrl/Cmd + S**)
+2. Click the **Render** button (or press **Ctrl/Cmd + Shift + K**)
+3. See the HTML output in the Viewer panel
+
+Did it render? You should see your cleaned data summary. Check that `data_clean.rds` was created in the `results/` folder.
+:::
+
+---
+
+## Quick Reference
+
+### Markdown Formatting
+
+| What you type | What you get |
+|---------------|--------------|
+| `**bold**` | **bold** |
+| `*italic*` | *italic* |
+| `# Heading 1` | Large heading |
+| `## Heading 2` | Medium heading |
+| `- item` | Bullet point |
+| `1. item` | Numbered list |
+
+### Code Chunk Options
+
+```{.r filename="data-cleaning.qmd"}
+#| echo: true
+#| eval: true
+#| message: false
+#| warning: false
+
+library(tidyverse)
+```
+
+| Option | What it does |
+|--------|--------------|
+| `echo: true/false` | Show/hide the code |
+| `eval: true/false` | Run/skip the code |
+| `message: false` | Hide package messages |
+| `warning: false` | Hide warnings |
+
+::: {.step-card}
+#### Try it yourself: Experiment with chunk options
+
+1. In your `data-cleaning.qmd`, add `#| echo: false` to the setup chunk
+2. Re-render the document
+3. **Question:** What changed in the output? Is the code visible or hidden?
+
+Try different combinations:
+
+| Try this | What do you expect? |
+|----------|---------------------|
+| `echo: false` | Code hidden, results shown |
+| `eval: false` | Code shown, but not run |
+| `echo: false` + `eval: false` | ??? (try it!) |
+
+::: {.callout-tip}
+## Discovery learning
+The best way to understand chunk options is to experiment! Change one option, render, see what happens.
+:::
+:::
+
+### Labels for Cross-Reference
+
+Name your chunks for later reference:
+
+```{.r filename="data-cleaning.qmd"}
+#| label: tbl-demographics
+#| tbl-cap: "Demographics of study participants"
+
+# Your table code here
+```
+
+- Use `tbl-` prefix for tables, `fig-` for figures
+- Reference with `@tbl-demographics` in your text
+
+---
+
+## Don't Forget: Commit & Push!
+
+::: {.step-card}
+#### Save your progress in Git
+
+**1. Stage your changes:**
+
+In the **Source Control** panel (left sidebar), click the **+** button next to `data-cleaning.qmd` to stage it.
+
+**2. Write your commit message:**
+
+Think about what you accomplished. A good commit message:
+
+- Starts with a verb (Add, Update, Fix, Create...)
+- Describes WHAT changed and optionally WHY
+- Is specific enough to understand later
+
+::: {.callout-tip collapse="true"}
+## Try AI-assisted commit messages
+You can use the built-in AI feature to suggest a commit message based on your changes. Alternatively, you can integrate an external AI models like Claude or Gemini into your workflow through their CLI tools.
+:::
+
+**3. Commit and Push:**
+
+- Click **Commit** to save locally
+- Click **Push** (↑) to upload to GitHub
+
+**3.5. View your changes:**
+
+In the **Source Control** panel, expand the commit you just made (in the History view) to see the **diff**—a line-by-line comparison showing exactly what changed. Green lines are additions, red lines are deletions. This is how Git tracks your work!
+
+**4. Verify on GitHub:**
+
+- Go to your repository on GitHub
+- Check that your changes appear in the commit history
+- Confirm `data-cleaning.qmd` shows your new code
+
+Commit after completing each logical unit of work.
+:::
+
+---
+
+← [Part 2: Project Setup](part2.qmd) | [Part 4: DRY Coding](part4.qmd) →

@@ -1,0 +1,70 @@
+---
+title: "Analysis"
+author: "YOUR NAME"
+date: today
+format: html
+---
+
+## Overview
+
+This document creates tables and figures for the manuscript.
+
+## Setup
+
+```{r}
+#| message: false
+
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(here)
+```
+
+## Load Cleaned Data
+
+```{r}
+# Load cleaned data from data-cleaning.qmd
+# TODO: Add data loading code during workshop
+```
+
+## Table 1: Participant Characteristics
+
+```{r}
+#| label: tbl-demographics
+#| tbl-cap: "Participant characteristics"
+
+# TODO: Create Table 1 using tbl_summary()
+# data_clean |>
+#   select(age, sex, education, ...) |>
+#   tbl_summary()
+```
+
+## Figure 1: Main Result
+
+```{r}
+#| label: fig-main
+#| fig-cap: "Main result figure"
+
+# TODO: Create main figure using ggplot2
+# ggplot(data_clean, aes(x = ..., y = ...)) +
+#   geom_point() +
+#   theme_minimal()
+```
+
+## Table 2: Main Analysis
+
+```{r}
+#| label: tbl-main
+#| tbl-cap: "Main analysis results"
+
+# TODO: Create analysis table
+# Example: regression results with tbl_regression()
+```
+
+## Additional Figures
+
+```{r}
+#| fig-cap: "Additional figure"
+
+# TODO: Add additional figures as needed
+```

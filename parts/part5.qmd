@@ -1,0 +1,854 @@
+---
+title: "Part 5: Tables & Figures"
+subtitle: "Code-generated output that updates automatically"
+---
+
+## Learning Goals
+
+By the end of this section, you will:
+
+- Create publication-ready **tables** with `gtsummary`
+- Create **figures** with `ggplot2`
+- Use `tidy()` to extract and compare **model coefficients**
+- Run **subgroup analysis** using `nest()` + `map()` (Part 4 skills!)
+- Experience the power of **Git** (the "surprise" exercise!)
+
+## Why Code-Generated Tables?
+
+```{mermaid}
+flowchart TB
+    subgraph Manual["❌ Manual Way"]
+        direction TB
+        M1["Run R analysis"] --> M2["Copy to Excel/Word"]
+        M2 --> M3["Format manually"]
+        M3 --> M4["Paste into paper"]
+        M4 -.->|"Data changes?"| M1
+        M5["🔄 Repeat everything"]
+    end
+
+    subgraph Code["✅ Code Way"]
+        direction TB
+        C1["Write code once"] --> C2["Tables & figures<br/>embedded in document"]
+        C2 --> C3["Render to paper"]
+        C3 -.->|"Data changes?"| C4["Just re-render"]
+        C4 --> C3
+    end
+```
+
+**The Code Way:** Write code once → Embedded results update **automatically** → No copy-paste errors
+
+**The Manual Way:** Run analysis → Copy to Word → Format manually → Data changes → **repeat everything**
+
+---
+
+## Setup
+
+If you're continuing from Part 4, `data_clean` is already loaded. If not, add this setup chunk:
+
+```{.r filename="analysis.qmd"}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(here)
+
+# Load cleaned data from Part 3
+data_clean <- readRDS(here("results", "data_clean.rds"))
+```
+
+---
+
+## Hands-on: Demographics Table
+
+::: {.step-card}
+#### Step 1: Create a basic table
+
+Add this code chunk to your `analysis.qmd`:
+
+```{.r filename="analysis.qmd"}
+#| label: tbl-demographics
+#| tbl-cap: "Participant characteristics by education level"
+
+data_clean |>
+  select(Education, Age, Gender, Race1, BPSysAve) |>
+  tbl_summary(by = Education)
+```
+:::
+
+::: {.step-card}
+#### Step 2: Customize the table
+
+```{.r filename="analysis.qmd"}
+#| label: tbl-demographics-custom
+#| tbl-cap: "Participant characteristics by education level"
+
+data_clean |>
+  mutate(Gender = str_to_title(Gender)) |>
+  select(Education, Age, Gender, Race1, BPSysAve) |>
+  tbl_summary(
+    by = Education,
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"
+    ),
+    label = list(
+      Age ~ "Age (years)",
+      Gender ~ "Sex",
+      Race1 ~ "Race/Ethnicity",
+      BPSysAve ~ "Systolic BP (mmHg)"
+    ),
+    missing = "no"
+  ) |>
+  add_overall() |>
+  bold_labels()
+```
+
+**Tip:** Ask AI "How do I add confidence intervals to gtsummary?" for customization help.
+:::
+
+---
+
+## Hands-on: Create a Figure
+
+::: {.step-card}
+#### Step 1: Box plot by education
+
+```{.r filename="analysis.qmd"}
+#| label: fig-bp-education
+#| fig-cap: "Distribution of systolic blood pressure by education level"
+#| fig-width: 7
+#| fig-height: 5
+
+data_clean |>
+  ggplot(aes(x = Education, y = BPSysAve, fill = Education)) +
+  geom_boxplot(alpha = 0.7) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3,
+    color = "darkred"
+  ) +
+  labs(
+    x = "Education Level",
+    y = "Systolic Blood Pressure (mmHg)",
+    title = "Blood Pressure Distribution by Education Level"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+:::
+
+::: {.step-card}
+#### Step 2: Reference in text
+
+In your text, you can write:
+
+```markdown
+As shown in @tbl-demographics, participants varied by education level.
+
+Blood pressure distribution is visualized in @fig-bp-education.
+```
+:::
+
+---
+
+## Hands-on: Regression Table
+
+In epidemiology, we almost always report regression results. Let's create a publication-ready regression table.
+
+::: {.step-card}
+#### Step 1: Fit a linear regression model
+
+```{.r filename="analysis.qmd"}
+#| label: fit-model
+
+# Model: Blood pressure ~ Education + covariates
+model_fit <- lm(BPSysAve ~ Education + Gender + Race1, data = data_clean)
+
+# View the results
+summary(model_fit)
+```
+
+This model estimates the association between education level and blood pressure, adjusting for sex and race/ethnicity.
+:::
+
+::: {.step-card}
+#### Step 2: Create a publication-ready table
+
+```{.r filename="analysis.qmd"}
+#| label: tbl-regression
+#| tbl-cap: "Association between education level and systolic blood pressure"
+
+model_fit |>
+  tbl_regression(
+    label = list(
+      Education ~ "Education level",
+      Gender ~ "Sex",
+      Race1 ~ "Race/ethnicity"
+    )
+  ) |>
+  bold_labels()
+```
+
+**What gtsummary does:** Converts your model into a formatted table with coefficients, confidence intervals, and p-values — no manual formatting needed!
+:::
+
+::: {.step-card}
+#### Step 3: Reference in text
+
+```markdown
+Results of the linear regression are shown in @tbl-regression.
+```
+:::
+
+---
+
+## Extracting Results with tidy()
+
+`gtsummary` is great for publication-ready tables, but sometimes you need more control:
+
+- Extract specific coefficients for inline text
+- Compare estimates across multiple models
+- Create custom tables with specific formatting
+
+The `broom` package provides `tidy()` to convert model output into a plain data frame.
+
+::: {.step-card}
+#### Step 1: Convert model to data frame
+
+```{.r filename="analysis.qmd"}
+#| label: tidy-basics
+
+library(broom)
+
+# tidy() converts model output to a data frame
+model_fit |> tidy(conf.int = TRUE)
+```
+
+Now you have a tibble with columns: `term`, `estimate`, `std.error`, `statistic`, `p.value`, `conf.low`, `conf.high`.
+:::
+
+::: {.step-card}
+#### Step 2: Extract specific coefficients
+
+```{.r filename="analysis.qmd"}
+#| label: tidy-extract
+
+# Extract just the College Grad coefficient
+model_fit |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  select(term, estimate, conf.low, conf.high, p.value)
+```
+
+**Why this matters:** You can now use this value in inline code, combine with other models, or format however you want.
+:::
+
+---
+
+## Comparing Models with tidy()
+
+A common epidemiology task: comparing crude and adjusted estimates to assess confounding.
+
+::: {.step-card}
+#### Step 1: Fit two models
+
+```{.r filename="analysis.qmd"}
+#| label: fit-two-models
+
+# Model 1: Without age adjustment
+model_crude <- lm(BPSysAve ~ Education + Gender + Race1, data = data_clean)
+
+# Model 2: With age adjustment
+model_adjusted <- lm(BPSysAve ~ Education + Gender + Race1 + Age, data = data_clean)
+```
+:::
+
+::: {.step-card}
+#### Step 2: Extract and compare coefficients
+
+```{.r filename="analysis.qmd"}
+#| label: compare-models
+
+# Extract College Grad coefficient from both models
+crude_result <- model_crude |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  mutate(model = "Crude (no age)")
+
+adjusted_result <- model_adjusted |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  mutate(model = "Age-adjusted")
+
+# Combine into comparison table
+comparison <- bind_rows(crude_result, adjusted_result) |>
+  select(model, estimate, conf.low, conf.high, p.value)
+
+comparison
+```
+
+**Interpretation:** If the coefficient changes substantially between models, age is a confounder of the education-BP relationship.
+:::
+
+::: {.step-card}
+#### Step 3: Visualize the comparison
+
+```{.r filename="analysis.qmd"}
+#| label: fig-comparison
+#| fig-cap: "Comparison of crude and age-adjusted estimates for College Grad vs 8th Grade"
+#| fig-width: 6
+#| fig-height: 3
+
+comparison |>
+  ggplot(aes(x = estimate, y = model)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+  geom_point(size = 3, color = "steelblue") +
+  labs(
+    x = "Difference in systolic BP (mmHg)\nCollege Grad vs. 8th Grade",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12)
+```
+:::
+
+::: {.step-card}
+#### Step 4: Create a publication-ready table
+
+```{.r filename="analysis.qmd"}
+#| label: tbl-comparison
+#| tbl-cap: "Comparison of crude and age-adjusted estimates for education-BP association"
+
+comparison |>
+  gt() |>
+  fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 1) |>
+  fmt_number(columns = p.value, decimals = 3) |>
+  cols_merge(
+    columns = c(conf.low, conf.high),
+    pattern = "({1}, {2})"
+  ) |>
+  cols_label(
+    model = "Model",
+    estimate = "β",
+    conf.low = "95% CI",
+    p.value = "P-value"
+  )
+```
+
+You can output your comparison as a figure (Step 3) or as a formatted table — choose whichever fits your needs.
+:::
+
+---
+
+## Subgroup Analysis: Combining Part 4 Skills
+
+Now let's put **Part 4 skills to work**. We'll create a publication-ready table showing results for **Overall** and by **Gender**, with both **Crude** and **Age-adjusted** models as columns.
+
+This combines everything you've learned:
+- **Part 4:** `nest()` + `map()` for iterating over subgroups
+- **New skill:** `pivot_wider()` for reshaping results into a matrix layout
+
+### Expected Output
+
+|          | N     | Crude β (95% CI)  | Age-adjusted β (95% CI) |
+|----------|-------|-------------------|-------------------------|
+| Overall  | 4,621 | -7.2 (-9.1, -5.3) | -3.1 (-5.0, -1.2)       |
+| Male     | 2,198 | -6.8 (-9.5, -4.1) | -2.5 (-5.2, 0.2)        |
+| Female   | 2,423 | -7.5 (-10.1, -4.9)| -3.6 (-6.2, -1.0)       |
+
+::: {.step-card}
+#### Step 1: Define a function that fits BOTH models
+
+This function returns results from both Crude and Age-adjusted models:
+
+```{.r filename="analysis.qmd"}
+#| label: define-fit-models
+
+# Function to fit Crude + Adjusted models and return both results
+fit_models <- function(data) {
+  # Skip if sample size is too small
+  if (nrow(data) < 30) {
+    return(tibble(
+      model = c("Crude", "Adjusted"),
+      estimate = NA_real_,
+      conf.low = NA_real_,
+      conf.high = NA_real_,
+      n = nrow(data)
+    ))
+  }
+
+  # Crude model (no age adjustment)
+  crude <- lm(BPSysAve ~ Education, data = data) |>
+    tidy(conf.int = TRUE) |>
+    filter(term == "EducationCollege Grad") |>
+    mutate(model = "Crude")
+
+  # Age-adjusted model
+  adjusted <- lm(BPSysAve ~ Education + Age, data = data) |>
+    tidy(conf.int = TRUE) |>
+    filter(term == "EducationCollege Grad") |>
+    mutate(model = "Adjusted")
+
+  # Return both results with sample size
+  bind_rows(crude, adjusted) |>
+    mutate(n = nrow(data))
+}
+```
+
+:::
+
+::: {.step-card}
+#### Step 2: Run for Overall + Gender subgroups
+
+```{.r filename="analysis.qmd"}
+#| label: run-subgroup-analysis
+
+# Overall results
+overall_results <- data_clean |>
+  fit_models() |>
+  mutate(subgroup = "Overall")
+
+# Results by Gender using nest() + map()
+gender_results <- data_clean |>
+  group_by(Gender) |>
+  nest() |>
+  mutate(results = map(data, fit_models)) |>
+  unnest(results) |>
+  mutate(subgroup = str_to_title(Gender)) |>
+  select(-data, -Gender)
+
+# Combine all results
+all_results <- bind_rows(overall_results, gender_results)
+
+all_results
+```
+
+**What happened:**
+
+- `fit_models()` ran on the full dataset → 2 rows (Crude + Adjusted)
+- `nest()` + `map()` ran `fit_models()` on Male and Female → 4 rows
+- `bind_rows()` combined everything → **6 rows total** (3 subgroups × 2 models)
+:::
+
+::: {.step-card}
+#### Step 3: Reshape with pivot_wider()
+
+Now we transform from **long** (one row per model) to **wide** (one column per model):
+
+```{.r filename="analysis.qmd"}
+#| label: pivot-results
+
+table_wide <- all_results |>
+  mutate(
+    # Format estimate with 95% CI
+    estimate_ci = sprintf("%.1f (%.1f, %.1f)", estimate, conf.low, conf.high)
+  ) |>
+  select(subgroup, n, model, estimate_ci) |>
+  distinct() |>  # Remove any duplicates
+  pivot_wider(
+    names_from = model,
+    values_from = estimate_ci
+  )
+
+table_wide
+```
+
+:::
+
+::: {.step-card}
+#### Step 4: Create publication-ready table with gt()
+
+```{.r filename="analysis.qmd"}
+#| label: tbl-subgroup
+#| tbl-cap: "Association between college education and systolic blood pressure: Overall and by sex"
+
+table_wide |>
+  # Order: Overall first, then alphabetical
+  mutate(subgroup = factor(subgroup, levels = c("Overall", "Female", "Male"))) |>
+  arrange(subgroup) |>
+  gt() |>
+  tab_spanner(
+    label = "Crude",
+    columns = Crude,
+    id = "spanner_crude"
+  ) |>
+  tab_spanner(
+    label = "Age-adjusted",
+    columns = Adjusted,
+    id = "spanner_adjusted"
+  ) |>
+  cols_label(
+    subgroup = "",
+    n = "N",
+    Crude = "β (95% CI)",
+    Adjusted = "β (95% CI)"
+  ) |>
+  cols_align(align = "center", columns = c(n, Crude, Adjusted)) |>
+  tab_footnote(
+    footnote = "Reference: ≤8th Grade education"
+  )
+```
+
+**Result:** A clean matrix table showing crude vs. adjusted estimates across subgroups — exactly what journals expect!
+:::
+
+::: {.step-card}
+#### Step 5: Visualize as a forest plot
+
+```{.r filename="analysis.qmd"}
+#| label: fig-subgroup
+#| fig-cap: "Association between college education and systolic blood pressure by subgroup"
+#| fig-width: 7
+#| fig-height: 4
+
+all_results |>
+  filter(!is.na(estimate)) |>
+  mutate(
+    subgroup = factor(subgroup, levels = c("Male", "Female", "Overall")),
+    model = factor(model, levels = c("Crude", "Adjusted"))
+  ) |>
+  ggplot(aes(x = estimate, y = subgroup, color = model, shape = model)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_errorbarh(
+    aes(xmin = conf.low, xmax = conf.high),
+    height = 0.2,
+    position = position_dodge(width = 0.4)
+  ) +
+  geom_point(size = 3, position = position_dodge(width = 0.4)) +
+  scale_color_manual(values = c("Crude" = "steelblue", "Adjusted" = "darkorange")) +
+  labs(
+    x = "Difference in systolic BP (mmHg)\nCollege Grad vs. ≤8th Grade",
+    y = NULL,
+    color = "Model",
+    shape = "Model"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom")
+```
+:::
+
+::: {.callout-tip}
+## Part 4 → Part 5 Connection
+
+| Part 4 Skill | Part 5 Application |
+|--------------|-------------------|
+| Write a function | `fit_models()` returns both Crude + Adjusted results |
+| `nest()` + `map()` | Apply to Gender subgroups automatically |
+| `bind_rows()` | Combine Overall + subgroup results |
+| **New: `pivot_wider()`** | Reshape for matrix table layout |
+
+**The payoff:** 6 regression models (3 subgroups × 2 model types), reshaped and formatted, in ~30 lines of code.
+:::
+
+---
+
+## Save Your Results
+
+Before the surprise exercise, save your results for use in the manuscript later:
+
+::: {.step-card}
+#### Save the model and comparison
+
+```{.r filename="analysis.qmd"}
+#| label: save-results
+
+# Save the age-adjusted model (for Part 6)
+saveRDS(model_adjusted, here("results", "model_fit.rds"))
+
+# Save the comparison table (for Part 6)
+saveRDS(comparison, here("results", "model_comparison.rds"))
+```
+
+**Why save these?** In Part 6, you'll load these in your manuscript to extract specific statistics using inline R code.
+:::
+
+::: {.step-card}
+#### Commit your progress
+
+1. Go to **Source Control** panel
+2. Stage `analysis.qmd`
+3. Write a commit message describing your changes
+4. Click **Commit**
+:::
+
+---
+
+## Self-Study: Git Restore Experience {#git-restore-self-study}
+
+::: {.callout-note}
+## Self-Study Section
+This section is for **self-paced learning** after the workshop. It demonstrates Git's powerful "restore" feature through a realistic scenario. Try it when you have 15-20 minutes to practice.
+:::
+
+Everything looks great! We created tables, figures, a model comparison, and committed to Git. Now let's experience why Git is your research safety net.
+
+::: {.callout-tip collapse="true"}
+## The Scenario: Advisor Feedback Loop
+
+### Plot Twist #1
+
+::: {.callout-warning}
+## Email from Your Advisor
+"The crude vs adjusted comparison is nice, but I think showing both estimates might confuse reviewers. Let's just keep the age-adjusted model. Can you simplify the analysis?"
+:::
+
+No problem! Let's simplify by removing the crude model and comparison.
+
+::: {.step-card}
+#### Make the changes
+
+1. Open `analysis.qmd`
+2. **Delete** the model comparison code (the `model_crude`, `crude_result`, `comparison`, and the comparison figure)
+3. Keep only the age-adjusted model:
+
+```{.r filename="analysis.qmd"}
+#| label: fit-model
+
+# Final model: Age-adjusted
+model_fit <- lm(BPSysAve ~ Education + Gender + Race1 + Age, data = data_clean)
+```
+
+4. Update the save code to only save `model_fit`
+5. Re-render and verify results
+6. Commit your changes with a descriptive message
+:::
+
+### Plot Twist #2
+
+::: {.callout-important}
+## Another Email (from your advisor, after journal review)
+"Reviewer 2 is asking to see the crude estimates to assess confounding. Can we add back the comparison table we had before? Sorry!"
+:::
+
+Sound familiar?
+
+### Without Git...
+
+- "Wait, what exactly did I delete?"
+- "I removed like 20 lines of code..."
+- "I don't remember the exact `tidy()` and `bind_rows()` syntax..."
+
+### With Git: Check the Diff
+
+1. Open **Source Control** panel
+2. Click on your recent commit
+3. See the **diff** — exactly which lines were deleted (shown in red)
+
+The comparison code you carefully wrote is all there in the diff!
+
+### With Git: Restore the Previous Version
+
+Now let's use Git to actually **restore** the file to its previous state—no manual editing required!
+
+::: {.step-card}
+#### Hands-on: Use `git restore`
+
+Open the terminal in Positron (**Terminal** → **New Terminal**).
+
+::: {.callout-note}
+## Terminal Working Directory
+Terminal commands like `git` need to run **inside your project folder**.
+
+**Good news:** When you open Terminal in Positron, it automatically starts in your project directory — no extra steps needed!
+
+If using an external terminal (e.g., macOS Terminal, Windows PowerShell), first navigate to your project:
+```bash
+cd /path/to/your/project
+```
+:::
+
+Now run:
+
+```bash
+# First, see your commit history
+git log --oneline
+```
+
+You'll see something like:
+```
+abc1234 (your commit about simplifying the model)
+def5678 (your commit about adding tables/figures)
+ghi9012 Initial commit
+```
+
+Now restore the file to the previous commit:
+
+```bash
+# Restore analysis.qmd to the state before the last commit
+git restore --source=HEAD~1 analysis.qmd
+```
+
+- `HEAD~1` means "one commit before the current one"
+- You can also use the commit hash: `git restore --source=def5678 analysis.qmd`
+
+::: {.callout-note}
+## What happened?
+Git replaced your file with the exact contents from that commit. All your comparison code is back — no retyping needed!
+:::
+:::
+
+::: {.step-card}
+#### Verify and commit
+
+1. Open `analysis.qmd` — confirm the comparison code is restored
+2. Re-render to verify the comparison table and figure appear
+3. Stage and commit with a descriptive message
+4. Run `git log --oneline` again — you now have 3 commits showing the full journey!
+:::
+
+### Other Ways to Undo Changes
+
+::: {.callout-tip collapse="true"}
+## For reference: Alternative approaches
+
+**`git restore`** (what we just did):
+
+- Restores specific file(s) to a previous state
+- HEAD stays where it is
+- Best when you know which file to restore
+
+**`git checkout <commit>` + new branch**:
+
+- Moves your entire project to a past state
+- Create a new branch from there to continue work
+- Best when you're not sure which files changed, or want to explore an old state
+
+**`git revert <commit>`**:
+
+- Creates a new commit that undoes a previous commit
+- Preserves full history (good for shared repositories)
+- Best when you've already pushed to GitHub
+
+For this workshop, `git restore` is the simplest approach!
+:::
+
+::: {.step-card}
+#### GUI option: Discard uncommitted changes
+
+If you haven't committed yet and want to undo changes:
+
+1. Open **Source Control** panel
+2. Find the modified file
+3. Right-click → **Discard Changes**
+
+This only works for changes that haven't been committed yet.
+:::
+
+::: {.callout-important}
+## Reflection: What would have happened without Git?
+
+Take a moment to think:
+
+- Could you rewrite the `tidy()` + `bind_rows()` comparison code from memory?
+- How long would it take to manually recreate the deleted code?
+- What if you had made similar deletions across 5 files?
+
+Git lets you experiment fearlessly because **every version is saved**.
+:::
+
+### The Real Lesson: Git as Your Research Safety Net
+
+::: {.callout-important}
+## Why This Matters
+
+The advisor feedback loop you just experienced is real:
+
+- "Add this analysis" → "Remove it" → "Actually, put it back"
+- Reviewer requests months later for code you deleted
+
+**Without Git:** Hope you commented it out, or rewrite from memory.
+**With Git:** One command restores any previous version.
+:::
+:::
+
+---
+
+## Beyond Restore: Branches for Experimentation
+
+What if you want to try a different approach **without risking** your working code? Git **branches** let you experiment in a parallel version of your project.
+
+```{mermaid}
+%%| fig-width: 8
+gitGraph
+    commit id: "Initial analysis"
+    commit id: "Add demographics table"
+    commit id: "Age-adjusted model"
+    branch exploratory-analysis
+    checkout exploratory-analysis
+    commit id: "Try alternative model"
+    commit id: "Compare specifications"
+    checkout main
+    commit id: "Continue main work"
+    merge exploratory-analysis id: "Merge results"
+```
+
+Think of **main** as your safe version. A branch is where you experiment — if it works, merge it back; if not, delete it.
+
+::: {.callout-note}
+## You Won't Practice This Today
+Branches require more Git knowledge than we can cover here. The goal is **awareness** — knowing this exists changes how you think about experimentation.
+:::
+
+| Scenario | Why a Branch Helps |
+|----------|-------------------|
+| Exploratory analysis | Experiment without affecting main results |
+| Different statistical approach | Compare methods side-by-side |
+
+::: {.callout-tip collapse="true"}
+## Learn More About Branches
+
+- [Happy Git with R: Branches](https://happygitwithr.com/git-branches)
+- [Atlassian Git Tutorial: Branches](https://www.atlassian.com/git/tutorials/using-branches)
+:::
+
+---
+
+::: {.callout-note}
+## Workshop Connections
+
+- **Part 2** introduced the basic Git workflow: edit → stage → commit
+- **Part 5** (this section) showed why that workflow matters: restoration and safety
+- **Part 7** will show how Git enables **collaboration** through Word documents with track changes
+- **Part 8** will introduce GitHub for sharing and `targets` for pipeline automation
+:::
+
+---
+
+## Going Further: Sensitivity Analysis
+
+::: {.callout-tip collapse="true"}
+## Optional: Apply the same pattern to sensitivity analysis
+
+The `nest()` + `map()` pattern works for any repeated analysis. For example, testing how results change across different thresholds:
+
+```{.r filename="analysis.qmd"}
+#| label: sensitivity-teaser
+#| eval: false
+
+# Test hypertension at different BP thresholds
+thresholds <- c(120, 130, 140, 150)
+
+map(thresholds, \(t) {
+  data_clean |>
+    mutate(hypertension = BPSysAve >= t) |>
+    glm(hypertension ~ Education + Age + Gender, data = _, family = binomial) |>
+    tidy(exponentiate = TRUE, conf.int = TRUE) |>
+    filter(term == "EducationCollege Grad") |>
+    mutate(threshold = t)
+}) |>
+  list_rbind()
+```
+
+The example files (`examples/nhanes-manuscript/notebooks/analysis.qmd`) show complete examples of sensitivity analyses using this pattern.
+:::
+
+---
+
+← [Part 4: DRY Coding](part4.qmd) | [Part 6: Quarto Manuscripts](part6.qmd) →

@@ -1,0 +1,409 @@
+---
+title: "Part 6: Quarto Manuscripts"
+subtitle: "Separate analysis from writing"
+---
+
+## Learning Goals
+
+By the end of this section, you will:
+
+- Separate analysis code from manuscript text
+- Use `embed` to pull tables and figures into your manuscript
+- Use inline code for dynamic numbers
+- Set up a Quarto Manuscripts project
+
+## The Challenge
+
+When writing a manuscript, you want to focus on the narrative — not on code.
+
+During data analysis, Quarto's code-and-text approach is invaluable: you document your reasoning, record decisions, and keep everything reproducible. But when you shift to **manuscript writing**, that same code becomes noise. You need to see your prose clearly.
+
+**The solution:** Separate your analysis notebooks from your manuscript file, then pull in just the results you need.
+
+::: {.callout-note}
+## Trade-off: Single File vs. Multiple Files
+
+**Single file approach (everything in one .qmd):**
+
+- Maximum reproducibility — everything runs in order
+- Long documents become hard to navigate
+- Slow rendering (entire document re-runs)
+
+**Multiple file approach (like this workshop):**
+
+- Easier to maintain and navigate
+- Faster iteration (only re-render what changed)
+- Requires careful management of dependencies
+
+**Our approach:** Splitting into 3 logical files (data-cleaning → analysis → manuscript) balances practicality with reproducibility. The key is using `.rds` files to pass data between steps, keeping the number of files minimal.
+:::
+
+## Recommended Project Structure
+
+Quarto Manuscripts uses a specific structure to separate analysis notebooks from the main article:
+
+```
+project/
+├── _quarto.yml           # Project configuration
+├── index.qmd             # Main manuscript (mostly prose)
+├── notebooks/            # Analysis notebooks folder
+│   ├── data-cleaning.qmd # Data import & cleaning
+│   └── analysis.qmd      # Tables, figures, models
+├── results/              # Saved data and model objects
+└── references.bib        # Citations
+```
+
+- **index.qmd** — Main manuscript with narrative text and embedded results
+- **notebooks/** — Folder containing analysis notebooks (Quarto recognizes this structure)
+- **notebooks/data-cleaning.qmd** — Import raw data, clean, and save processed data as `.rds`
+- **notebooks/analysis.qmd** — Create tables, figures, and models. Save results.
+
+::: {.callout-important}
+## Why the `notebooks/` folder?
+
+Quarto Manuscripts expects this structure. Without it, layout issues can occur (figures may render incorrectly, page widths may change unexpectedly). The `notebooks/` folder clearly separates analysis code from the main article.
+:::
+
+---
+
+## Hands-on: Reorganize to Manuscripts Structure
+
+::: {.step-card}
+#### Step 1: Create the `notebooks/` folder and move files
+
+In your project, create a new folder called `notebooks/`:
+
+1. In the Files pane, click **New Folder**
+2. Name it `notebooks`
+3. Move your `data-cleaning.qmd` and `analysis.qmd` into this folder
+
+Your project should now look like:
+
+```
+your-project/
+├── _quarto.yml          # Already exists from template
+├── index.qmd
+├── notebooks/
+│   ├── data-cleaning.qmd
+│   └── analysis.qmd
+├── results/
+└── ...
+```
+:::
+
+::: {.step-card}
+#### Step 2: Update analysis.qmd for table embedding
+
+Open `notebooks/analysis.qmd` and add `html-table-processing: none` to the YAML header:
+
+```yaml
+---
+title: "Analysis"
+author: "YOUR NAME"
+date: today
+format: html
+html-table-processing: none
+---
+```
+
+::: {.callout-warning}
+## Why is this required?
+
+When embedding tables created with `gtsummary` or `gt`, Quarto may re-process the HTML and break the page layout. This setting prevents that.
+:::
+:::
+
+::: {.step-card}
+#### Step 3: Clean cache after reorganization
+
+After moving files, clean the Quarto cache to ensure a fresh render:
+
+**In Terminal:**
+
+```bash
+rm -rf _freeze _manuscript .quarto
+```
+
+**Or in Positron:** Delete the `_freeze`, `_manuscript`, and `.quarto` folders from the Files pane.
+
+::: {.callout-note}
+## Why clean the cache?
+
+The template uses `freeze: auto` to speed up rendering. However, when you reorganize files (e.g., moving to `notebooks/`), the cached outputs may reference old file paths. Cleaning the cache ensures everything is rebuilt correctly.
+:::
+:::
+
+## Embedding Tables & Figures
+
+### The `embed` Shortcode
+
+In `index.qmd`, you can pull results from `notebooks/analysis.qmd`:
+
+```markdown
+As shown in @tbl-demographics, participants had...
+
+{{< embed notebooks/analysis.qmd#tbl-demographics >}}
+
+The relationship is visualized in @fig-bp-education.
+
+{{< embed notebooks/analysis.qmd#fig-bp-education >}}
+```
+
+### Breaking It Down
+
+| Part | Meaning |
+|------|---------|
+| `{{< ... >}}` | Quarto shortcode |
+| `embed` | The embed command |
+| `notebooks/analysis.qmd` | Path to source file (in notebooks folder) |
+| `#tbl-demographics` | Label of the chunk to embed |
+
+---
+
+## Hands-on: Create index.qmd (Main Manuscript)
+
+::: {.step-card}
+#### Step 1: Rename your manuscript file
+
+Rename your manuscript file to `index.qmd` (Quarto Manuscripts convention):
+
+```yaml
+---
+title: "Education Level and Blood Pressure"
+author: "Your Name"
+format:
+  html: default
+  docx: default
+bibliography: references.bib
+---
+```
+
+::: {.callout-note}
+If you already have an `index.qmd`, update its YAML header to match this format.
+:::
+:::
+
+::: {.step-card}
+#### Step 2: Add a setup chunk
+
+```{.r filename="index.qmd"}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(here)
+
+# Load data for inline code
+data_clean <- readRDS(here("results", "data_clean.rds"))
+```
+:::
+
+::: {.step-card}
+#### Step 3: Write the introduction
+
+```markdown
+## Introduction
+
+This study examines the association between education level
+and systolic blood pressure using NHANES data.
+
+## Methods
+
+We included `r nrow(data_clean)` participants from NHANES 2009-2012.
+```
+:::
+
+::: {.step-card}
+#### Step 4: Add embedded results
+
+```markdown
+## Results
+
+Participant characteristics are presented in @tbl-demographics.
+
+{{< embed notebooks/analysis.qmd#tbl-demographics >}}
+
+Blood pressure varied by education level (@fig-bp-education).
+
+{{< embed notebooks/analysis.qmd#fig-bp-education >}}
+```
+
+::: {.callout-tip}
+## Remember the path!
+Since `analysis.qmd` is now in the `notebooks/` folder, you need to include `notebooks/` in the embed path.
+:::
+:::
+
+---
+
+## Inline Numbers: The Key Technique
+
+### The Challenge
+
+`embed` works for figures and tables, but what about numbers in text?
+
+> "We included **847** participants with complete data..."
+
+### The Solution
+
+::: {.step-card}
+#### Save raw materials in analysis.qmd
+
+```{.r filename="analysis.qmd"}
+#| label: save-results
+
+saveRDS(model_fit, here("results", "model_fit.rds"))
+saveRDS(data_clean, here("results", "data_clean.rds"))
+```
+:::
+
+::: {.step-card}
+#### Load and use in index.qmd
+
+```{.r filename="index.qmd"}
+#| label: setup
+#| include: false
+
+data_clean <- readRDS(here("results", "data_clean.rds"))
+model_fit <- readRDS(here("results", "model_fit.rds"))
+```
+
+Then use inline code:
+
+```markdown
+We included `r nrow(data_clean)` participants.
+The mean age was `r round(mean(data_clean$Age), 1)` years.
+```
+
+Renders as:
+
+> We included 4,225 participants. The mean age was 47.3 years.
+:::
+
+::: {.step-card}
+#### Your turn: Try inline code
+
+Add these lines to your `index.qmd` Methods section:
+
+```markdown
+We included `r nrow(data_clean)` participants from NHANES 2009-2012.
+The sample included `r sum(data_clean$Gender == "female")` females
+and `r sum(data_clean$Gender == "male")` males.
+```
+
+**Render and check:** Do you see numbers instead of code? If yes, you've mastered inline R code!
+
+::: {.callout-tip}
+## What happened?
+Quarto evaluated the R code inside the backticks and replaced it with the result. If the data changes, these numbers update automatically on the next render.
+:::
+:::
+
+### Why Save "Materials" Not "Numbers"?
+
+- You don't know all the numbers you'll need while writing
+- Raw materials let you extract any number later
+- Example: Later you need sample size by sex — just add `` `r sum(data_clean$Gender == "female")` ``
+
+---
+
+## Cross-References
+
+Quarto handles numbering automatically:
+
+| You write | You get |
+|-----------|---------|
+| `@tbl-demographics` | Table 1 |
+| `@fig-bp-education` | Figure 1 |
+| `@sec-methods` | Section 2 |
+
+Numbers update automatically when you add/remove items!
+
+## Citations
+
+::: {.step-card}
+#### Set up citations
+
+**1. Create `references.bib`:**
+
+```bibtex
+@article{whelton2018hypertension,
+  author = {Whelton, Paul K and others},
+  title = {2017 ACC/AHA Hypertension Guideline},
+  journal = {Journal of the American College of Cardiology},
+  year = {2018},
+  volume = {71},
+  pages = {e127--e248}
+}
+```
+
+**2. Add to YAML:**
+
+```yaml
+bibliography: references.bib
+```
+
+**3. Cite in text:**
+
+```markdown
+Hypertension affects millions of Americans [@whelton2018hypertension].
+```
+:::
+
+---
+
+## Hands-on: Render to Word
+
+::: {.step-card}
+#### Complete the cycle
+
+1. Make sure all files are saved
+2. In `index.qmd`, click **Render**
+3. Check the Word output — embedded tables and figures should appear!
+4. Commit all new files with a descriptive message
+:::
+
+---
+
+## The Dependency Problem
+
+What happens when things change?
+
+```
+notebooks/data-cleaning.qmd (changed!)
+      ↓
+notebooks/analysis.qmd (needs update!)
+      ↓
+index.qmd (needs update!)
+```
+
+Without automation, it's easy to forget downstream updates. The **targets** package can help automate this—see the [Resources page](../resources.qmd) if you want to explore pipeline automation for complex projects.
+
+---
+
+## Push to GitHub
+
+Before moving to collaboration in Part 7, let's push all your work to GitHub.
+
+::: {.callout-important}
+## Checkpoint: Push Your Progress
+
+**1. Check your commits:**
+Look at the Git History in Positron. You should have commits from Parts 3–6.
+
+**2. Push to GitHub:**
+
+- Click **Push** (↑) in the Git panel
+- Or use the sync icon in the status bar
+
+**3. Verify on GitHub:**
+
+- Visit your repository on GitHub
+- Confirm your latest commits appear
+:::
+
+This ensures your work is backed up and ready for collaboration!
+
+---
+
+← [Part 5: Tables & Figures](part5.qmd) | [Part 7: Collaboration](part7.qmd) →

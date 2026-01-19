@@ -1,0 +1,111 @@
+---
+title: "Education Level and Blood Pressure"
+subtitle: "An analysis of NHANES 2009-2012 data"
+author:
+  - name: "Your Name"
+    affiliations:
+      - name: Boston University School of Public Health
+format:
+  html: default
+  docx: default
+bibliography: references.bib
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(here)
+
+# Load data for inline code
+data_clean <- readRDS(here("results", "data_clean.rds"))
+model_fit <- readRDS(here("results", "model_fit.rds"))
+comparison <- readRDS(here("results", "model_comparison.rds"))
+
+# Extract key numbers for inline reporting
+n_total <- nrow(data_clean)
+n_female <- sum(data_clean$Gender == "female")
+n_male <- sum(data_clean$Gender == "male")
+pct_female <- round(n_female / n_total * 100, 1)
+mean_age <- round(mean(data_clean$Age), 1)
+sd_age <- round(sd(data_clean$Age), 1)
+mean_bp <- round(mean(data_clean$BPSysAve), 1)
+sd_bp <- round(sd(data_clean$BPSysAve), 1)
+
+# Extract regression coefficient for college grad
+coef_college <- round(coef(model_fit)["EducationCollege Grad"], 1)
+
+# Extract comparison values
+crude_est <- comparison |> filter(model == "Crude (no age)") |> pull(estimate) |> round(1)
+adjusted_est <- comparison |> filter(model == "Age-adjusted") |> pull(estimate) |> round(1)
+```
+
+## Introduction
+
+Socioeconomic factors, including educational attainment, are strongly associated with cardiovascular health outcomes [@kaplan1996socioeconomic]. Higher education has been linked to lower rates of hypertension, though the mechanisms underlying this relationship remain complex [@pampel2010socioeconomic].
+
+This study examines the association between education level and systolic blood pressure using data from the National Health and Nutrition Examination Survey (NHANES) [@nhanes2023].
+
+## Methods
+
+### Study Population
+
+We analyzed data from NHANES 2009-2012, a nationally representative survey of the U.S. civilian non-institutionalized population. The analytic sample included adults aged 20 years and older with complete data on blood pressure, education, and covariates.
+
+### Statistical Analysis
+
+We used linear regression to estimate the association between educational attainment and systolic blood pressure, adjusting for age, sex, and race/ethnicity. Subgroup analyses were performed by sex. All analyses were conducted in R using the gtsummary package for table generation [@sjoberg2021gtsummary] and ggplot2 for visualization [@wickham2016ggplot2].
+
+## Results
+
+### Participant Characteristics
+
+The study included `r format(n_total, big.mark = ",")` participants with complete data. The mean age was `r mean_age` years (SD = `r sd_age`), and `r pct_female`% were female. The sample included `r format(n_female, big.mark = ",")` females and `r format(n_male, big.mark = ",")` males. The mean systolic blood pressure was `r mean_bp` mmHg (SD = `r sd_bp`).
+
+Participant characteristics by education level are presented in @tbl-demographics.
+
+{{< embed notebooks/analysis.qmd#tbl-demographics >}}
+
+### Blood Pressure Distribution
+
+@fig-bp-education shows the distribution of systolic blood pressure by education level. Blood pressure generally decreased with increasing education, with college graduates showing the lowest mean values.
+
+{{< embed notebooks/analysis.qmd#fig-bp-education >}}
+
+### Association Between Education and Blood Pressure
+
+Results of the linear regression analysis are presented in @tbl-regression. Compared to participants with 8th grade education or less, college graduates had `r coef_college` mmHg lower systolic blood pressure after adjusting for sex and race/ethnicity.
+
+{{< embed notebooks/analysis.qmd#tbl-regression >}}
+
+### Model Comparison: Effect of Age Adjustment
+
+Given the strong correlation between age and both education and blood pressure, we compared crude and age-adjusted estimates (@fig-comparison). The crude estimate for college graduates was `r crude_est` mmHg, which attenuated to `r adjusted_est` mmHg after age adjustment, suggesting substantial confounding by age.
+
+{{< embed notebooks/analysis.qmd#fig-comparison >}}
+
+### Subgroup Analysis by Sex
+
+To examine whether the education-blood pressure association varied by sex, we conducted stratified analyses. The forest plot (@fig-subgroup) visualizes the crude and age-adjusted estimates for overall and by sex.
+
+{{< embed notebooks/analysis.qmd#fig-subgroup >}}
+
+## Discussion
+
+This analysis of NHANES data found an inverse association between educational attainment and systolic blood pressure. College graduates had substantially lower blood pressure compared to those with 8th grade education or less. This finding is consistent with prior literature on socioeconomic gradients in cardiovascular health [@kaplan1996socioeconomic].
+
+Importantly, the association was substantially attenuated after adjusting for age, indicating that age is a major confounder in the education-blood pressure relationship. The subgroup analysis suggested similar patterns in both males and females.
+
+### Limitations
+
+This cross-sectional analysis cannot establish causality. The use of complete case analysis may introduce selection bias. Future studies should consider survey weights and more comprehensive adjustment for potential confounders.
+
+## Conclusion
+
+Educational attainment is inversely associated with systolic blood pressure in U.S. adults. These findings underscore the importance of addressing social determinants of cardiovascular health.
+
+## References
+
+::: {#refs}
+:::

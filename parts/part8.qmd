@@ -1,0 +1,62 @@
+---
+title: "Part 8: Wrap-up"
+subtitle: "What we learned and where to go next"
+---
+
+## What We Built Today
+
+Over the past 3 hours, you created a complete reproducible workflow:
+
+```{mermaid}
+flowchart TD
+    A["Raw Data"] --> B["data-cleaning.qmd"]
+    B --> C["data_clean.rds"]
+    C --> D["analysis.qmd"]
+    D --> E["Tables & Figures"]
+    D --> F["model_fit.rds"]
+    E --> G["index.qmd"]
+    F --> G
+    C --> G
+    G --> H["Word / PDF / HTML"]
+
+    style A fill:#ffcdd2
+    style H fill:#c8e6c9
+```
+
+Every step is documented, every change is tracked, and the entire pipeline can be re-run at any time.
+
+## Before vs After
+
+| Before | After |
+|--------|-------|
+| Manual copy-paste of numbers | Code-generated tables and figures |
+| "Which version is this?" | Git history shows every change |
+| Fear of making changes | Confidence to experiment |
+| Hours to redo analysis | Minutes to re-run pipeline |
+| "I can't remember what I did" | Everything documented in code |
+
+---
+
+## Key Takeaways
+
+::: {.callout-important}
+## Three principles to remember
+
+1. **Automate with code** → Reproducibility comes naturally when you eliminate manual steps
+    - Function and iteration via purrr
+    - Script-based publication-ready tables and figures
+
+2. **Version control everything** → Never lose work, experiment freely, recover from mistakes
+
+3. **Plain text is powerful** → Git-friendly, AI-friendly, future-proof
+:::
+
+---
+
+## What's Next
+
+See the [**Resources page**](../resources.qmd) for learning materials, real-world examples, and links to continue your reproducibility journey.
+
+---
+
+← [Part 7: Collaboration](part7.qmd) | [Return to Home](../index.qmd)

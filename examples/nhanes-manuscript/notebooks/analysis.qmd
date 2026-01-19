@@ -1,0 +1,546 @@
+---
+title: "Analysis"
+author: "Your Name"
+date: today
+format: html
+html-table-processing: none
+---
+
+## Overview
+
+This document creates tables and figures for the manuscript examining the association between education level and blood pressure using NHANES data.
+
+## Setup
+
+```{r}
+#| message: false
+
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(broom)
+library(here)
+```
+
+## Load Cleaned Data
+
+```{r}
+# Load cleaned data from data-cleaning.qmd
+data_clean <- readRDS(here("results", "data_clean.rds"))
+
+# Verify data loaded correctly
+dim(data_clean)
+head(data_clean)
+```
+
+## Table 1: Participant Characteristics
+
+```{r}
+#| label: tbl-demographics
+#| tbl-cap: "Participant characteristics by education level"
+
+tbl_demographics <- data_clean |>
+  mutate(Gender = str_to_title(Gender)) |>
+  select(Education, Age, Gender, Race1, BPSysAve) |>
+  tbl_summary(
+    by = Education,
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"
+    ),
+    label = list(
+      Age ~ "Age, years",
+      Gender ~ "Sex",
+      Race1 ~ "Race/ethnicity",
+      BPSysAve ~ "Systolic BP, mmHg"
+    ),
+    missing = "no"
+  ) |>
+  add_overall() |>
+  modify_header(
+    label ~ "**Characteristic**",
+    stat_0 ~ "**Overall** (n={n})",
+    stat_1 ~ "**8th Grade** (n={n})",
+    stat_2 ~ "**9-11th Grade** (n={n})",
+    stat_3 ~ "**High School** (n={n})",
+    stat_4 ~ "**Some College** (n={n})",
+    stat_5 ~ "**College Grad** (n={n})"
+  ) |>
+  modify_spanning_header(
+    c(stat_1, stat_2, stat_3, stat_4, stat_5) ~ "**Education**"
+  ) |>
+  modify_footnote(everything() ~ NA) |>
+  bold_labels() |>
+  as_gt() |>
+  tab_options(
+    table.font.size = px(14)
+  ) |>
+  tab_style(
+    style = cell_text(align = "left"),
+    locations = cells_footnotes()
+  ) |>
+  tab_footnote(
+    footnote = "Values are mean (SD) for continuous variables and n (%) for categorical variables."
+  )
+
+tbl_demographics
+```
+
+## Figure 1: Blood Pressure by Education Level
+
+```{r}
+#| label: fig-main
+#| fig-cap: "Distribution of systolic blood pressure by education level"
+#| fig-width: 6
+#| fig-height: 5
+#| out-width: "100%"
+
+# Shorter labels for x-axis
+education_labels <- c(
+  "8th Grade" = "≤8th\nGrade",
+  "9 - 11th Grade" = "9-11th\nGrade",
+  "High School" = "High\nSchool",
+  "Some College" = "Some\nCollege",
+  "College Grad" = "College\nGrad"
+)
+
+# Calculate means for annotation
+means_data <- data_clean |>
+  group_by(Education) |>
+  summarise(
+    mean_bp = mean(BPSysAve),
+    n = n(),
+    .groups = "drop"
+  )
+
+fig_main <- data_clean |>
+  ggplot(aes(x = Education, y = BPSysAve)) +
+  geom_boxplot(
+    fill = "gray85",
+    color = "gray40",
+    outlier.size = 1,
+    outlier.alpha = 0.5
+  ) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3,
+    color = "black"
+  ) +
+  geom_text(
+    data = means_data,
+    aes(x = Education, y = 68, label = paste0("n=", format(n, big.mark = ","))),
+    size = 3,
+    color = "gray30"
+  ) +
+  scale_x_discrete(labels = education_labels) +
+  scale_y_continuous(
+    breaks = seq(80, 200, by = 20),
+    limits = c(62, 210)
+  ) +
+  labs(
+    x = "Education level",
+    y = "Systolic blood pressure (mmHg)",
+    caption = "Note: Boxes represent IQR with median line; whiskers extend to 1.5× IQR. Diamonds indicate group means."
+  ) +
+  theme_classic(base_size = 11) +
+  theme(
+    axis.text = element_text(color = "black"),
+    axis.ticks = element_line(color = "black"),
+    axis.line = element_line(color = "black"),
+    plot.caption = element_text(hjust = 0, size = 9, color = "gray30"),
+    plot.margin = margin(10, 15, 10, 10)
+  )
+
+fig_main
+```
+
+## Table 2: Regression Analysis
+
+```{r}
+# Fit linear regression model (unadjusted for age)
+# Model: BPSysAve ~ Education + Gender + Race1
+model_fit <- lm(BPSysAve ~ Education + Gender + Race1, data = data_clean)
+
+# Model summary
+summary(model_fit)
+```
+
+```{r}
+#| label: tbl-regression
+#| tbl-cap: "Association between education level and systolic blood pressure"
+
+tbl_regression <- model_fit |>
+  tbl_regression(
+    label = list(
+      Education ~ "Education level",
+      Gender ~ "Sex",
+      Race1 ~ "Race/ethnicity"
+    ),
+    estimate_fun = ~ style_sigfig(.x, digits = 2)
+  ) |>
+  bold_labels() |>
+  modify_footnote(everything() ~ NA) |>
+  as_gt() |>
+  tab_options(
+    table.font.size = px(14)
+  ) |>
+  tab_style(
+    style = cell_text(align = "left"),
+    locations = cells_footnotes()
+  ) |>
+  tab_footnote(
+    footnote = "Reference categories: 8th Grade (Education), Female (Sex), Black (Race/ethnicity)."
+  )
+
+tbl_regression
+```
+
+## Additional Figure: Scatter Plot with Trend
+
+```{r}
+#| fig-cap: "Relationship between age and systolic blood pressure by education level. Lines represent linear regression fits for each education group."
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "100%"
+
+# Education labels for legend
+education_legend <- c(
+  "8th Grade" = "≤8th Grade",
+  "9 - 11th Grade" = "9-11th Grade",
+  "High School" = "High School",
+  "Some College" = "Some College",
+  "College Grad" = "College Grad"
+)
+
+fig_scatter <- data_clean |>
+  ggplot(aes(x = Age, y = BPSysAve, color = Education, linetype = Education)) +
+  geom_point(alpha = 0.15, size = 0.8, show.legend = FALSE) +
+  geom_smooth(method = "lm", se = FALSE, linewidth = 0.9) +
+  scale_color_grey(start = 0.7, end = 0, labels = education_legend) +
+  scale_linetype_manual(
+    values = c("solid", "dashed", "dotted", "dotdash", "longdash"),
+    labels = education_legend
+  ) +
+  scale_x_continuous(breaks = seq(20, 80, by = 10)) +
+  scale_y_continuous(breaks = seq(100, 180, by = 20)) +
+  coord_cartesian(ylim = c(95, 180)) +
+  labs(
+    x = "Age (years)",
+    y = "Systolic blood pressure (mmHg)",
+    color = "Education level",
+    linetype = "Education level"
+  ) +
+  theme_classic(base_size = 11) +
+  theme(
+    axis.text = element_text(color = "black"),
+    axis.ticks = element_line(color = "black"),
+    axis.line = element_line(color = "black"),
+    legend.position = "bottom",
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 9),
+    legend.key.width = unit(1.5, "cm")
+  ) +
+  guides(
+    color = guide_legend(nrow = 2),
+    linetype = guide_legend(nrow = 2)
+  )
+
+fig_scatter
+```
+
+## Subgroup Analysis: Education Effect by Gender and Race
+
+This analysis demonstrates using `nest()` and `map()` to run the same model across multiple subgroups defined by Gender and Race combinations.
+
+### Define Analysis Function
+
+```{r}
+# Function to fit model and extract education coefficient for College Grad
+fit_education_model <- function(data) {
+  # Check if we have enough data
+
+  if (nrow(data) < 30) {
+    return(tibble(
+      term = "EducationCollege Grad",
+      estimate = NA_real_,
+      std.error = NA_real_,
+      p.value = NA_real_,
+      n = nrow(data)
+    ))
+  }
+
+  # Fit model
+
+  model <- lm(BPSysAve ~ Education, data = data)
+
+  # Extract coefficient for College Grad (vs 8th Grade reference)
+  tidy(model) |>
+    filter(term == "EducationCollege Grad") |>
+    mutate(n = nrow(data))
+}
+```
+
+### Run Subgroup Analysis
+
+```{r}
+# Nest data by Gender and Race, then apply model to each subgroup
+subgroup_results <- data_clean |>
+  group_by(Gender, Race1) |>
+  nest() |>
+  mutate(
+    model_results = map(data, fit_education_model)
+  ) |>
+  unnest(model_results) |>
+  select(-data) |>
+  ungroup() |>
+  # Calculate 95% CI
+
+  mutate(
+    ci_lower = estimate - 1.96 * std.error,
+    ci_upper = estimate + 1.96 * std.error
+  ) |>
+  # Remove subgroups with missing estimates
+
+  filter(!is.na(estimate))
+
+subgroup_results
+```
+
+### Figure: Subgroup Forest Plot
+
+```{r}
+#| label: fig-subgroup
+#| fig-cap: "Association between college education and systolic blood pressure by sex and race/ethnicity subgroups"
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "100%"
+
+fig_subgroup <- subgroup_results |>
+  mutate(
+    Gender = str_to_title(Gender),
+    subgroup = paste(Gender, Race1, sep = ", "),
+    subgroup = fct_reorder(subgroup, estimate)
+  ) |>
+  ggplot(aes(x = estimate, y = subgroup)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_errorbarh(
+    aes(xmin = ci_lower, xmax = ci_upper),
+    height = 0.2,
+    linewidth = 0.6,
+    color = "gray30"
+  ) +
+  geom_point(aes(size = n), color = "black") +
+  scale_size_continuous(
+    range = c(2, 5),
+    name = "Sample size",
+    breaks = c(200, 500, 1000),
+    labels = scales::comma
+  ) +
+  scale_x_continuous(breaks = seq(-30, 10, by = 10)) +
+  labs(
+    x = "Difference in systolic blood pressure (mmHg)",
+    y = NULL,
+    caption = "Note: College graduate vs. ≤8th grade. Error bars indicate 95% CI. Point size reflects sample size."
+  ) +
+  theme_classic(base_size = 11) +
+  theme(
+    axis.text = element_text(color = "black"),
+    axis.ticks.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.line.x = element_line(color = "black"),
+    axis.ticks.x = element_line(color = "black"),
+    legend.position = "bottom",
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 9),
+    plot.caption = element_text(hjust = 0, size = 9, color = "gray30"),
+    plot.margin = margin(10, 15, 10, 10)
+  )
+
+fig_subgroup
+```
+
+### Table: Subgroup Results (Supplementary)
+
+```{r}
+#| label: supp-subgroup
+
+tbl_subgroup <- subgroup_results |>
+  mutate(
+    Gender = str_to_title(Gender),
+    subgroup = paste(Gender, Race1, sep = ", "),
+    estimate_ci = sprintf("%.1f (%.1f, %.1f)", estimate, ci_lower, ci_upper),
+    p_value = case_when(
+      p.value < 0.001 ~ "<0.001",
+      TRUE ~ sprintf("%.3f", p.value)
+    )
+  ) |>
+  select(
+    Subgroup = subgroup,
+    n = n,
+    `Coefficient (95% CI)` = estimate_ci,
+    `p-value` = p_value
+  ) |>
+  gt() |>
+  tab_options(
+    table.font.size = px(14)
+  ) |>
+  cols_align(
+    align = "center",
+    columns = c(n, `Coefficient (95% CI)`, `p-value`)
+  ) |>
+  tab_style(
+    style = cell_text(align = "left"),
+    locations = cells_footnotes()
+  ) |>
+  tab_footnote(
+    footnote = "Coefficient represents difference in mean systolic BP (mmHg); college graduate vs. ≤8th grade education."
+  )
+
+tbl_subgroup
+```
+
+## Sensitivity Analysis: Hypertension Threshold
+
+This analysis demonstrates using `map()` to repeat the same analysis across different threshold values. We examine how the association between education and hypertension varies when using different blood pressure cutoffs to define hypertension.
+
+### Define Sensitivity Analysis Function
+
+```{r}
+# Function to run logistic regression at a given BP threshold
+# Note: data is first argument to enable piping
+analyze_threshold <- function(data, threshold) {
+  # Create binary hypertension variable
+  analysis_data <- data |>
+    mutate(hypertension = as.integer(BPSysAve >= threshold))
+
+  # Fit logistic regression
+
+  model <- glm(
+    hypertension ~ Education + Gender + Race1,
+    data = analysis_data,
+    family = binomial
+  )
+
+
+  # Extract OR for College Grad
+  tidy(model, exponentiate = TRUE, conf.int = TRUE) |>
+    filter(term == "EducationCollege Grad") |>
+    mutate(
+      threshold = threshold,
+      n_hypertensive = sum(analysis_data$hypertension),
+      pct_hypertensive = round(mean(analysis_data$hypertension) * 100, 1)
+    )
+}
+```
+
+### Run Sensitivity Analysis Across Thresholds
+
+```{r}
+# Define thresholds to test (120 to 150 mmHg in 5 mmHg increments)
+thresholds <- seq(120, 150, by = 5)
+
+# Apply analysis function to each threshold using map (pipe data into function)
+threshold_results <- map(thresholds, \(t) data_clean |> analyze_threshold(t)) |>
+  list_rbind()
+
+threshold_results |>
+  select(threshold, estimate, conf.low, conf.high, p.value, pct_hypertensive)
+```
+
+### Figure: Threshold Sensitivity Plot
+
+```{r}
+#| label: fig-threshold
+#| fig-cap: "Sensitivity analysis: Odds ratio for hypertension across different systolic blood pressure thresholds"
+#| fig-width: 7
+#| fig-height: 5
+#| out-width: "100%"
+
+fig_threshold <- threshold_results |>
+  ggplot(aes(x = threshold, y = estimate)) +
+  geom_ribbon(
+    aes(ymin = conf.low, ymax = conf.high),
+    alpha = 0.15,
+    fill = "gray50"
+  ) +
+  geom_line(color = "black", linewidth = 0.8) +
+  geom_point(color = "black", size = 2.5) +
+  geom_vline(xintercept = c(130, 140), linetype = "dashed", color = "gray60") +
+  annotate(
+    "text", x = 130, y = 0.46,
+    label = "ACC/AHA", size = 3, hjust = 0.5, color = "gray40"
+  ) +
+  annotate(
+    "text", x = 140, y = 0.46,
+    label = "Traditional", size = 3, hjust = 0.5, color = "gray40"
+  ) +
+  scale_x_continuous(breaks = thresholds) +
+  scale_y_continuous(
+    breaks = seq(0.2, 0.5, by = 0.1),
+    limits = c(0.15, 0.5)
+  ) +
+  labs(
+    x = "Systolic blood pressure threshold (mmHg)",
+    y = "Odds ratio",
+    caption = "Note: College graduate vs. ≤8th grade. Shaded area represents 95% CI. OR < 1 indicates lower odds among college graduates."
+  ) +
+  theme_classic(base_size = 11) +
+  theme(
+    axis.text = element_text(color = "black"),
+    axis.ticks = element_line(color = "black"),
+    axis.line = element_line(color = "black"),
+    plot.caption = element_text(hjust = 0, size = 9, color = "gray30"),
+    plot.margin = margin(10, 15, 10, 10)
+  )
+
+fig_threshold
+```
+
+### Table: Threshold Sensitivity Results (Supplementary)
+
+```{r}
+#| label: supp-threshold
+
+tbl_threshold <- threshold_results |>
+  mutate(
+    or_ci = sprintf("%.2f (%.2f, %.2f)", estimate, conf.low, conf.high),
+    p_value = case_when(
+      p.value < 0.001 ~ "<0.001",
+      TRUE ~ sprintf("%.3f", p.value)
+    )
+  ) |>
+  select(
+    `BP Threshold (mmHg)` = threshold,
+    `% Hypertensive` = pct_hypertensive,
+    `OR (95% CI)` = or_ci,
+    `P-value` = p_value
+  ) |>
+  gt() |>
+  tab_footnote(
+    footnote = "OR adjusted for sex and race/ethnicity. College Graduate vs 8th Grade Education."
+  ) |>
+  tab_source_note(
+    source_note = "OR < 1 indicates lower odds of hypertension among college graduates"
+  )
+
+tbl_threshold
+```
+
+## Save Results
+
+```{r}
+# Save model fit for use in manuscript
+saveRDS(model_fit, here("results", "model_fit.rds"))
+
+# Save the gtsummary table object
+saveRDS(tbl_demographics, here("results", "tbl_demographics.rds"))
+saveRDS(tbl_regression, here("results", "tbl_regression.rds"))
+
+# Save subgroup and sensitivity analysis results
+saveRDS(subgroup_results, here("results", "subgroup_results.rds"))
+saveRDS(threshold_results, here("results", "threshold_results.rds"))
+
+cat("Results saved to", here("results"), "\n")
+```

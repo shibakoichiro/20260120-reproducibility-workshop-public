@@ -1,0 +1,3044 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Your Name">
+
+<title>Education Level and Blood Pressure: Analysis of NHANES 2009-2012</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-81e35ebdb4125010edbabe6010586085.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<meta name="citation_title" content="Education Level and Blood Pressure: Analysis of NHANES 2009-2012">
+<meta name="citation_author" content="Your Name">
+<meta name="citation_language" content="en">
+<meta name="citation_reference" content="citation_title=National Health and Nutrition Examination Survey;,citation_author=Centers for Disease Control and Prevention;,citation_publication_date=2023;,citation_cover_date=2023;,citation_year=2023;,citation_fulltext_html_url=https://www.cdc.gov/nchs/nhanes/index.htm;">
+<meta name="citation_reference" content="citation_title=NHANES: Data from the US National Health and Nutrition Examination Study;,citation_author=Randall Pruim;,citation_publication_date=2015;,citation_cover_date=2015;,citation_year=2015;,citation_fulltext_html_url=https://CRAN.R-project.org/package=NHANES;">
+<meta name="citation_reference" content="citation_title=Reproducible summary tables with the gtsummary package;,citation_author=Daniel D Sjoberg;,citation_author=Karissa Whiting;,citation_author=Michael Curry;,citation_author=Jessica A Lavery;,citation_author=Joseph Larmarange;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_issue=1;,citation_doi=10.32614/RJ-2021-053;,citation_volume=13;,citation_journal_title=The R Journal;">
+<meta name="citation_reference" content="citation_title=ggplot2: Elegant Graphics for Data Analysis;,citation_author=Hadley Wickham;,citation_publication_date=2016;,citation_cover_date=2016;,citation_year=2016;,citation_fulltext_html_url=https://ggplot2.tidyverse.org;,citation_isbn=978-3-319-24277-4;">
+<meta name="citation_reference" content="citation_title=2017 ACC/AHA/AAPA/ABC/ACPM/AGS/APhA/ASH/ASPC/NMA/PCNA guideline for the prevention, detection, evaluation, and management of high blood pressure in adults: A report of the American College of Cardiology/American Heart Association Task Force on Clinical Practice Guidelines;,citation_author=Paul K Whelton;,citation_author=Robert M Carey;,citation_author=Wilbert S Aronow;,citation_author=Donald E Casey;,citation_author=Karen J Collins;,citation_author=Cheryl Dennison Himmelfarb;,citation_author=Sondra M DePalma;,citation_author=Samuel Gidding;,citation_author=Kenneth A Jamerson;,citation_author=Daniel W Jones;,citation_author=others;,citation_publication_date=2018;,citation_cover_date=2018;,citation_year=2018;,citation_issue=19;,citation_doi=10.1016/j.jacc.2017.11.006;,citation_volume=71;,citation_journal_title=Journal of the American College of Cardiology;">
+<meta name="citation_reference" content="citation_title=Socioeconomic factors and cardiovascular disease: A review of the literature;,citation_author=George A Kaplan;,citation_author=Julian E Keil;,citation_publication_date=1996;,citation_cover_date=1996;,citation_year=1996;,citation_issue=10;,citation_doi=10.1161/01.CIR.94.10.2291;,citation_volume=94;,citation_journal_title=Circulation;">
+<meta name="citation_reference" content="citation_title=Socioeconomic disparities in health behaviors;,citation_author=Fred C Pampel;,citation_author=Patrick M Krueger;,citation_author=Justin T Denney;,citation_publication_date=2010;,citation_cover_date=2010;,citation_year=2010;,citation_doi=10.1146/annurev.soc.012809.102529;,citation_volume=36;,citation_journal_title=Annual Review of Sociology;">
+<meta name="citation_reference" content="citation_title=Education and health: Evaluating theories and evidence;,citation_author=David M Cutler;,citation_author=Adriana Lleras-Muney;,citation_publication_date=2006;,citation_cover_date=2006;,citation_year=2006;,citation_publisher=Russell Sage Foundation;">
+</head>
+
+<body>
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Education Level and Blood Pressure: Analysis of NHANES 2009-2012</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+            <div class="quarto-title-meta-author">
+          <div class="quarto-title-meta-heading">Author</div>
+          <div class="quarto-title-meta-heading">Affiliation</div>
+          
+                <div class="quarto-title-meta-contents">
+            <p class="author">Your Name </p>
+          </div>
+                <div class="quarto-title-meta-contents">
+                    <p class="affiliation">
+                        Boston University School of Public Health
+                      </p>
+                  </div>
+                    </div>
+        
+        <div class="quarto-title-meta">
+
+                      
+          
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      <div class="quarto-alternate-formats"><div class="quarto-title-meta-heading">Other Formats</div><div class="quarto-title-meta-contents"><p><a href="index.docx"><i class="bi bi-file-word"></i>MS Word</a></p></div></div></div>
+    </div>
+
+
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <ul class="collapse">
+  <li><a href="#study-population" id="toc-study-population" class="nav-link" data-scroll-target="#study-population">Study Population</a></li>
+  <li><a href="#measures" id="toc-measures" class="nav-link" data-scroll-target="#measures">Measures</a></li>
+  <li><a href="#statistical-analysis" id="toc-statistical-analysis" class="nav-link" data-scroll-target="#statistical-analysis">Statistical Analysis</a></li>
+  </ul></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a>
+  <ul class="collapse">
+  <li><a href="#participant-characteristics" id="toc-participant-characteristics" class="nav-link" data-scroll-target="#participant-characteristics">Participant Characteristics</a></li>
+  <li><a href="#blood-pressure-distribution" id="toc-blood-pressure-distribution" class="nav-link" data-scroll-target="#blood-pressure-distribution">Blood Pressure Distribution</a></li>
+  <li><a href="#association-between-education-and-blood-pressure" id="toc-association-between-education-and-blood-pressure" class="nav-link" data-scroll-target="#association-between-education-and-blood-pressure">Association Between Education and Blood Pressure</a></li>
+  <li><a href="#subgroup-analysis" id="toc-subgroup-analysis" class="nav-link" data-scroll-target="#subgroup-analysis">Subgroup Analysis</a></li>
+  <li><a href="#sensitivity-analysis" id="toc-sensitivity-analysis" class="nav-link" data-scroll-target="#sensitivity-analysis">Sensitivity Analysis</a></li>
+  </ul></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">Discussion</a>
+  <ul class="collapse">
+  <li><a href="#strengths-and-limitations" id="toc-strengths-and-limitations" class="nav-link" data-scroll-target="#strengths-and-limitations">Strengths and Limitations</a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#supplementary-materials" id="toc-supplementary-materials" class="nav-link" data-scroll-target="#supplementary-materials">Supplementary Materials</a></li>
+  </ul>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="notebooks/analysis-preview.html"><i class="bi bi-journal-code"></i>Analysis</a></li><li><a href="index-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="notebooks/data-cleaning-preview.html"><i class="bi bi-journal-code"></i>Data Cleaning</a></li></ul></div></nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+  
+
+
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p><strong>Background:</strong> Socioeconomic factors, including educational attainment, have been associated with cardiovascular health outcomes. This study examines the association between education level and systolic blood pressure using nationally representative data.</p>
+<p><strong>Methods:</strong> We analyzed data from 6960 adults aged 20 years and older from the National Health and Nutrition Examination Survey (NHANES) 2009-2012. Linear regression was used to estimate the association between education level and systolic blood pressure, adjusting for sex and race/ethnicity.</p>
+<p><strong>Results:</strong> Higher education levels were associated with lower systolic blood pressure. Compared to participants with less than 9th grade education, college graduates had lower mean systolic blood pressure (coefficient: -10 mmHg).</p>
+<p><strong>Conclusions:</strong> Education level is inversely associated with blood pressure in U.S. adults. These findings highlight the importance of addressing social determinants of cardiovascular health.</p>
+</section>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Hypertension affects nearly half of all adults in the United States and is a major risk factor for cardiovascular disease <span class="citation" data-cites="whelton2018hypertension">(<a href="#ref-whelton2018hypertension" role="doc-biblioref">1</a>)</span>. Socioeconomic factors, including educational attainment, have been consistently associated with cardiovascular health outcomes <span class="citation" data-cites="kaplan1996socioeconomic pampel2010socioeconomic">(<a href="#ref-kaplan1996socioeconomic" role="doc-biblioref">2</a>,<a href="#ref-pampel2010socioeconomic" role="doc-biblioref">3</a>)</span>.</p>
+<p>Education may influence blood pressure through multiple pathways, including health behaviors, access to healthcare, and chronic stress <span class="citation" data-cites="cutler2011education">(<a href="#ref-cutler2011education" role="doc-biblioref">4</a>)</span>. Understanding the relationship between education and blood pressure can inform public health interventions aimed at reducing cardiovascular health disparities.</p>
+<p>This study examines the association between education level and systolic blood pressure using data from the National Health and Nutrition Examination Survey (NHANES), a nationally representative survey of the U.S. civilian population <span class="citation" data-cites="nhanes2023">(<a href="#ref-nhanes2023" role="doc-biblioref">5</a>)</span>.</p>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<section id="study-population" class="level3">
+<h3 class="anchored" data-anchor-id="study-population">Study Population</h3>
+<p>We analyzed data from the NHANES 2009-2012 cycles, accessed through the R package <code>NHANES</code> <span class="citation" data-cites="nhanespackage">(<a href="#ref-nhanespackage" role="doc-biblioref">6</a>)</span>. The NHANES dataset contains 6,960 observations that have been resampled to remove oversampling effects, allowing the data to be treated as a simple random sample for educational purposes.</p>
+<p>We included adults aged 20 years and older with complete data on education level, blood pressure measurements, sex, and race/ethnicity. The final analytic sample included 6,960 participants.</p>
+</section>
+<section id="measures" class="level3">
+<h3 class="anchored" data-anchor-id="measures">Measures</h3>
+<p><strong>Outcome:</strong> Systolic blood pressure was measured as the average of up to three readings (variable: <code>BPSysAve</code>).</p>
+<p><strong>Exposure:</strong> Educational attainment was categorized as: 8th grade or less, 9-11th grade, high school graduate, some college, or college graduate.</p>
+<p><strong>Covariates:</strong> We adjusted for sex (male/female) and race/ethnicity (Mexican, Hispanic, White, Black, Other).</p>
+</section>
+<section id="statistical-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-analysis">Statistical Analysis</h3>
+<p>We used descriptive statistics to characterize the study population. Linear regression was used to estimate the association between education level and systolic blood pressure, with adjustment for sex and race/ethnicity.</p>
+<p>All analyses were conducted in R using the <code>gtsummary</code> package for tables <span class="citation" data-cites="sjoberg2021gtsummary">(<a href="#ref-sjoberg2021gtsummary" role="doc-biblioref">7</a>)</span> and <code>ggplot2</code> for figures <span class="citation" data-cites="wickham2016ggplot2">(<a href="#ref-wickham2016ggplot2" role="doc-biblioref">8</a>)</span>.</p>
+</section>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<section id="participant-characteristics" class="level3">
+<h3 class="anchored" data-anchor-id="participant-characteristics">Participant Characteristics</h3>
+<p>The study included 6,960 participants. The mean age was 47.2 years (SD = 16.9), and 50.5% were female. The mean systolic blood pressure was 121 mmHg (SD = 17.1).</p>
+<p>Participant characteristics by education level are presented in <a href="#tbl-demographics" class="quarto-xref">Table&nbsp;1</a>.</p>
+<div class="quarto-embed-nb-cell">
+<div class="cell">
+<div id="tbl-demographics" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-demographics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Participant characteristics by education level
+</figcaption>
+<div aria-describedby="tbl-demographics-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display">
+<div id="dlflboyhyr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#dlflboyhyr table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#dlflboyhyr thead, #dlflboyhyr tbody, #dlflboyhyr tfoot, #dlflboyhyr tr, #dlflboyhyr td, #dlflboyhyr th {
+  border-style: none;
+}
+
+#dlflboyhyr p {
+  margin: 0;
+  padding: 0;
+}
+
+#dlflboyhyr .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#dlflboyhyr .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#dlflboyhyr .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#dlflboyhyr .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#dlflboyhyr .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#dlflboyhyr .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#dlflboyhyr .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#dlflboyhyr .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#dlflboyhyr .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#dlflboyhyr .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#dlflboyhyr .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#dlflboyhyr .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#dlflboyhyr .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#dlflboyhyr .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#dlflboyhyr .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dlflboyhyr .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#dlflboyhyr .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#dlflboyhyr .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#dlflboyhyr .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dlflboyhyr .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#dlflboyhyr .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dlflboyhyr .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#dlflboyhyr .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dlflboyhyr .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dlflboyhyr .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dlflboyhyr .gt_left {
+  text-align: left;
+}
+
+#dlflboyhyr .gt_center {
+  text-align: center;
+}
+
+#dlflboyhyr .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#dlflboyhyr .gt_font_normal {
+  font-weight: normal;
+}
+
+#dlflboyhyr .gt_font_bold {
+  font-weight: bold;
+}
+
+#dlflboyhyr .gt_font_italic {
+  font-style: italic;
+}
+
+#dlflboyhyr .gt_super {
+  font-size: 65%;
+}
+
+#dlflboyhyr .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#dlflboyhyr .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#dlflboyhyr .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#dlflboyhyr .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#dlflboyhyr .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#dlflboyhyr .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#dlflboyhyr .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#dlflboyhyr .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#dlflboyhyr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="gt_col_headings gt_spanner_row header">
+<th rowspan="2" id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
+<th rowspan="2" id="stat_0" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Overall</strong> (n=6960)</th>
+<th colspan="5" id="level 1; stat_1" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" scope="colgroup"><div class="gt_column_spanner">
+<strong>Education</strong>
+</div></th>
+</tr>
+<tr class="gt_col_headings even">
+<th id="stat_1" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>8th Grade</strong> (n=423)</th>
+<th id="stat_2" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>9-11th Grade</strong> (n=866)</th>
+<th id="stat_3" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>High School</strong> (n=1460)</th>
+<th id="stat_4" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Some College</strong> (n=2175)</th>
+<th id="stat_5" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>College Grad</strong> (n=2036)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label" style="font-weight: bold">Age, years</td>
+<td class="gt_row gt_center" headers="stat_0">47 (17)</td>
+<td class="gt_row gt_center" headers="stat_1">55 (18)</td>
+<td class="gt_row gt_center" headers="stat_2">48 (18)</td>
+<td class="gt_row gt_center" headers="stat_3">48 (18)</td>
+<td class="gt_row gt_center" headers="stat_4">45 (17)</td>
+<td class="gt_row gt_center" headers="stat_5">47 (15)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label" style="font-weight: bold">Sex</td>
+<td class="gt_row gt_center" headers="stat_0"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_1"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_2"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_3"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_4"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_5"><br>
+</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Female</td>
+<td class="gt_row gt_center" headers="stat_0">3,514 (50%)</td>
+<td class="gt_row gt_center" headers="stat_1">190 (45%)</td>
+<td class="gt_row gt_center" headers="stat_2">386 (45%)</td>
+<td class="gt_row gt_center" headers="stat_3">735 (50%)</td>
+<td class="gt_row gt_center" headers="stat_4">1,142 (53%)</td>
+<td class="gt_row gt_center" headers="stat_5">1,061 (52%)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Male</td>
+<td class="gt_row gt_center" headers="stat_0">3,446 (50%)</td>
+<td class="gt_row gt_center" headers="stat_1">233 (55%)</td>
+<td class="gt_row gt_center" headers="stat_2">480 (55%)</td>
+<td class="gt_row gt_center" headers="stat_3">725 (50%)</td>
+<td class="gt_row gt_center" headers="stat_4">1,033 (47%)</td>
+<td class="gt_row gt_center" headers="stat_5">975 (48%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label" style="font-weight: bold">Race/ethnicity</td>
+<td class="gt_row gt_center" headers="stat_0"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_1"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_2"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_3"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_4"><br>
+</td>
+<td class="gt_row gt_center" headers="stat_5"><br>
+</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Black</td>
+<td class="gt_row gt_center" headers="stat_0">771 (11%)</td>
+<td class="gt_row gt_center" headers="stat_1">21 (5.0%)</td>
+<td class="gt_row gt_center" headers="stat_2">148 (17%)</td>
+<td class="gt_row gt_center" headers="stat_3">208 (14%)</td>
+<td class="gt_row gt_center" headers="stat_4">268 (12%)</td>
+<td class="gt_row gt_center" headers="stat_5">126 (6.2%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Hispanic</td>
+<td class="gt_row gt_center" headers="stat_0">395 (5.7%)</td>
+<td class="gt_row gt_center" headers="stat_1">63 (15%)</td>
+<td class="gt_row gt_center" headers="stat_2">65 (7.5%)</td>
+<td class="gt_row gt_center" headers="stat_3">83 (5.7%)</td>
+<td class="gt_row gt_center" headers="stat_4">110 (5.1%)</td>
+<td class="gt_row gt_center" headers="stat_5">74 (3.6%)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Mexican</td>
+<td class="gt_row gt_center" headers="stat_0">582 (8.4%)</td>
+<td class="gt_row gt_center" headers="stat_1">168 (40%)</td>
+<td class="gt_row gt_center" headers="stat_2">134 (15%)</td>
+<td class="gt_row gt_center" headers="stat_3">119 (8.2%)</td>
+<td class="gt_row gt_center" headers="stat_4">111 (5.1%)</td>
+<td class="gt_row gt_center" headers="stat_5">50 (2.5%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;White</td>
+<td class="gt_row gt_center" headers="stat_0">4,697 (67%)</td>
+<td class="gt_row gt_center" headers="stat_1">131 (31%)</td>
+<td class="gt_row gt_center" headers="stat_2">481 (56%)</td>
+<td class="gt_row gt_center" headers="stat_3">999 (68%)</td>
+<td class="gt_row gt_center" headers="stat_4">1,517 (70%)</td>
+<td class="gt_row gt_center" headers="stat_5">1,569 (77%)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Other</td>
+<td class="gt_row gt_center" headers="stat_0">515 (7.4%)</td>
+<td class="gt_row gt_center" headers="stat_1">40 (9.5%)</td>
+<td class="gt_row gt_center" headers="stat_2">38 (4.4%)</td>
+<td class="gt_row gt_center" headers="stat_3">51 (3.5%)</td>
+<td class="gt_row gt_center" headers="stat_4">169 (7.8%)</td>
+<td class="gt_row gt_center" headers="stat_5">217 (11%)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label" style="font-weight: bold">Systolic BP, mmHg</td>
+<td class="gt_row gt_center" headers="stat_0">121 (17)</td>
+<td class="gt_row gt_center" headers="stat_1">126 (19)</td>
+<td class="gt_row gt_center" headers="stat_2">122 (18)</td>
+<td class="gt_row gt_center" headers="stat_3">122 (17)</td>
+<td class="gt_row gt_center" headers="stat_4">121 (17)</td>
+<td class="gt_row gt_center" headers="stat_5">118 (16)</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_footnotes odd">
+<td colspan="7" class="gt_footnote" style="text-align: left;">Values are mean (SD) for continuous variables and n (%) for categorical variables.</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="blood-pressure-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="blood-pressure-distribution">Blood Pressure Distribution</h3>
+<p><a href="#fig-main" class="quarto-xref">Figure&nbsp;1</a> shows the distribution of systolic blood pressure by education level. Blood pressure generally decreased with increasing education, with college graduates having the lowest mean blood pressure.</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-fig-main" class="cell" data-fig-width="6" data-fig-height="5">
+<div class="cell-output cell-output-display">
+<div id="fig-main" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/notebooks-analysis-fig-main-output-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Distribution of systolic blood pressure by education level"><img src="index_files/figure-html/notebooks-analysis-fig-main-output-2.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-main-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Distribution of systolic blood pressure by education level
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="association-between-education-and-blood-pressure" class="level3">
+<h3 class="anchored" data-anchor-id="association-between-education-and-blood-pressure">Association Between Education and Blood Pressure</h3>
+<p>Results of the linear regression analysis are presented in <a href="#tbl-regression" class="quarto-xref">Table&nbsp;2</a>. Compared to participants with 8th grade education or less, those with higher education levels had lower systolic blood pressure. College graduates had a coefficient of -10 mmHg compared to the reference group.</p>
+<div class="quarto-embed-nb-cell">
+<div class="cell">
+<div id="tbl-regression" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-regression-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Association between education level and systolic blood pressure
+</figcaption>
+<div aria-describedby="tbl-regression-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display">
+<div id="mpitntzyzd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#mpitntzyzd table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#mpitntzyzd thead, #mpitntzyzd tbody, #mpitntzyzd tfoot, #mpitntzyzd tr, #mpitntzyzd td, #mpitntzyzd th {
+  border-style: none;
+}
+
+#mpitntzyzd p {
+  margin: 0;
+  padding: 0;
+}
+
+#mpitntzyzd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#mpitntzyzd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#mpitntzyzd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#mpitntzyzd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#mpitntzyzd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#mpitntzyzd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#mpitntzyzd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#mpitntzyzd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#mpitntzyzd .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#mpitntzyzd .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#mpitntzyzd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#mpitntzyzd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#mpitntzyzd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#mpitntzyzd .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#mpitntzyzd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mpitntzyzd .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#mpitntzyzd .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#mpitntzyzd .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#mpitntzyzd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mpitntzyzd .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#mpitntzyzd .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mpitntzyzd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#mpitntzyzd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mpitntzyzd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#mpitntzyzd .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#mpitntzyzd .gt_left {
+  text-align: left;
+}
+
+#mpitntzyzd .gt_center {
+  text-align: center;
+}
+
+#mpitntzyzd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#mpitntzyzd .gt_font_normal {
+  font-weight: normal;
+}
+
+#mpitntzyzd .gt_font_bold {
+  font-weight: bold;
+}
+
+#mpitntzyzd .gt_font_italic {
+  font-style: italic;
+}
+
+#mpitntzyzd .gt_super {
+  font-size: 65%;
+}
+
+#mpitntzyzd .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#mpitntzyzd .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#mpitntzyzd .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#mpitntzyzd .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#mpitntzyzd .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#mpitntzyzd .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#mpitntzyzd .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#mpitntzyzd .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#mpitntzyzd div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table do-not-create-environment cell caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="gt_col_headings header">
+<th id="label" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"><strong>Characteristic</strong></th>
+<th id="estimate" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>Beta</strong></th>
+<th id="conf.low" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>95% CI</strong></th>
+<th id="p.value" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><strong>p-value</strong></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="label" style="font-weight: bold">Education level</td>
+<td class="gt_row gt_center" headers="estimate"><br>
+</td>
+<td class="gt_row gt_center" headers="conf.low"><br>
+</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;8th Grade</td>
+<td class="gt_row gt_center" headers="estimate">—</td>
+<td class="gt_row gt_center" headers="conf.low">—</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;9 - 11th Grade</td>
+<td class="gt_row gt_center" headers="estimate">-5.8</td>
+<td class="gt_row gt_center" headers="conf.low">-7.8, -3.8</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;High School</td>
+<td class="gt_row gt_center" headers="estimate">-6.0</td>
+<td class="gt_row gt_center" headers="conf.low">-7.9, -4.1</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Some College</td>
+<td class="gt_row gt_center" headers="estimate">-7.4</td>
+<td class="gt_row gt_center" headers="conf.low">-9.2, -5.5</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;College Grad</td>
+<td class="gt_row gt_center" headers="estimate">-10</td>
+<td class="gt_row gt_center" headers="conf.low">-12, -8.1</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label" style="font-weight: bold">Sex</td>
+<td class="gt_row gt_center" headers="estimate"><br>
+</td>
+<td class="gt_row gt_center" headers="conf.low"><br>
+</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;female</td>
+<td class="gt_row gt_center" headers="estimate">—</td>
+<td class="gt_row gt_center" headers="conf.low">—</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;male</td>
+<td class="gt_row gt_center" headers="estimate">3.8</td>
+<td class="gt_row gt_center" headers="conf.low">3.0, 4.6</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label" style="font-weight: bold">Race/ethnicity</td>
+<td class="gt_row gt_center" headers="estimate"><br>
+</td>
+<td class="gt_row gt_center" headers="conf.low"><br>
+</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Black</td>
+<td class="gt_row gt_center" headers="estimate">—</td>
+<td class="gt_row gt_center" headers="conf.low">—</td>
+<td class="gt_row gt_center" headers="p.value"><br>
+</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Hispanic</td>
+<td class="gt_row gt_center" headers="estimate">-6.0</td>
+<td class="gt_row gt_center" headers="conf.low">-8.1, -4.0</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Mexican</td>
+<td class="gt_row gt_center" headers="estimate">-8.0</td>
+<td class="gt_row gt_center" headers="conf.low">-9.9, -6.1</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;White</td>
+<td class="gt_row gt_center" headers="estimate">-1.9</td>
+<td class="gt_row gt_center" headers="conf.low">-3.2, -0.58</td>
+<td class="gt_row gt_center" headers="p.value">0.005</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="label">&nbsp;&nbsp;&nbsp;&nbsp;Other</td>
+<td class="gt_row gt_center" headers="estimate">-5.7</td>
+<td class="gt_row gt_center" headers="conf.low">-7.6, -3.8</td>
+<td class="gt_row gt_center" headers="p.value">&lt;0.001</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_footnotes odd">
+<td colspan="4" class="gt_footnote" style="text-align: left;">Reference categories: 8th Grade (Education), Female (Sex), Black (Race/ethnicity).</td>
+</tr>
+<tr class="gt_sourcenotes even">
+<td colspan="4" class="gt_sourcenote">Abbreviation: CI = Confidence Interval</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="subgroup-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="subgroup-analysis">Subgroup Analysis</h3>
+<p>To examine whether the education-blood pressure association varied across demographic groups, we conducted subgroup analyses stratified by sex and race/ethnicity (<a href="#fig-subgroup" class="quarto-xref">Figure&nbsp;2</a>). The inverse association between college education and blood pressure was observed across most subgroups, though the magnitude varied. Detailed numerical results are provided in <a href="#supptbl-subgroup" class="quarto-xref">Table S1</a>.</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-fig-subgroup" class="cell" data-fig-width="7" data-fig-height="5">
+<div class="cell-output cell-output-display">
+<div id="fig-subgroup" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-subgroup-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/notebooks-analysis-fig-subgroup-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Association between college education and systolic blood pressure by sex and race/ethnicity subgroups"><img src="index_files/figure-html/notebooks-analysis-fig-subgroup-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-subgroup-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Association between college education and systolic blood pressure by sex and race/ethnicity subgroups
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="sensitivity-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="sensitivity-analysis">Sensitivity Analysis</h3>
+<p>We examined the robustness of our findings using different blood pressure thresholds to define hypertension (<a href="#fig-threshold" class="quarto-xref">Figure&nbsp;3</a>). The protective association of higher education was consistent across thresholds ranging from 120 to 150 mmHg. Detailed numerical results are provided in <a href="#supptbl-threshold" class="quarto-xref">Table S2</a>.</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-fig-threshold" class="cell" data-fig-width="7" data-fig-height="5">
+<div class="cell-output cell-output-display">
+<div id="fig-threshold" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-threshold-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/notebooks-analysis-fig-threshold-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Sensitivity analysis: Odds ratio for hypertension across different systolic blood pressure thresholds"><img src="index_files/figure-html/notebooks-analysis-fig-threshold-output-1.png" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-threshold-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Sensitivity analysis: Odds ratio for hypertension across different systolic blood pressure thresholds
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="discussion" class="level2">
+<h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
+<p>This study found an inverse association between educational attainment and systolic blood pressure in a nationally representative sample of U.S. adults. Participants with higher education levels had lower mean blood pressure compared to those with less education.</p>
+<p>These findings are consistent with previous research documenting socioeconomic gradients in cardiovascular health <span class="citation" data-cites="kaplan1996socioeconomic">(<a href="#ref-kaplan1996socioeconomic" role="doc-biblioref">2</a>)</span>. Several mechanisms may explain this relationship, including differences in health behaviors, access to healthcare, occupational exposures, and chronic stress associated with socioeconomic position <span class="citation" data-cites="pampel2010socioeconomic cutler2011education">(<a href="#ref-pampel2010socioeconomic" role="doc-biblioref">3</a>,<a href="#ref-cutler2011education" role="doc-biblioref">4</a>)</span>.</p>
+<section id="strengths-and-limitations" class="level3">
+<h3 class="anchored" data-anchor-id="strengths-and-limitations">Strengths and Limitations</h3>
+<p>Strengths of this study include the use of nationally representative data and objective blood pressure measurements. However, several limitations should be noted. First, this is a cross-sectional analysis, limiting our ability to establish causal relationships. Second, we did not account for the complex survey design (sampling weights) as this analysis was conducted for educational purposes. Third, residual confounding by unmeasured factors cannot be ruled out.</p>
+</section>
+<section id="conclusions" class="level3">
+<h3 class="anchored" data-anchor-id="conclusions">Conclusions</h3>
+<p>Education level is inversely associated with blood pressure in U.S. adults. These findings highlight the importance of addressing social determinants of health in efforts to reduce cardiovascular disease burden.</p>
+</section>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body" role="list">
+<div id="ref-whelton2018hypertension" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Whelton PK, Carey RM, Aronow WS, Casey DE, Collins KJ, Dennison Himmelfarb C, et al. <a href="https://doi.org/10.1016/j.jacc.2017.11.006">2017 <span>ACC</span>/<span>AHA</span>/<span>AAPA</span>/<span>ABC</span>/<span>ACPM</span>/<span>AGS</span>/<span>APhA</span>/<span>ASH</span>/<span>ASPC</span>/<span>NMA</span>/<span>PCNA</span> guideline for the prevention, detection, evaluation, and management of high blood pressure in adults: A report of the <span>American</span> <span>College</span> of <span>Cardiology</span>/<span>American</span> <span>Heart</span> <span>Association</span> <span>Task</span> <span>Force</span> on <span>Clinical</span> <span>Practice</span> <span>Guidelines</span></a>. Journal of the American College of Cardiology. 2018;71(19):e127–248. </div>
+</div>
+<div id="ref-kaplan1996socioeconomic" class="csl-entry" role="listitem">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Kaplan GA, Keil JE. <a href="https://doi.org/10.1161/01.CIR.94.10.2291">Socioeconomic factors and cardiovascular disease: A review of the literature</a>. Circulation. 1996;94(10):2291–8. </div>
+</div>
+<div id="ref-pampel2010socioeconomic" class="csl-entry" role="listitem">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Pampel FC, Krueger PM, Denney JT. <a href="https://doi.org/10.1146/annurev.soc.012809.102529">Socioeconomic disparities in health behaviors</a>. Annual Review of Sociology. 2010;36:349–70. </div>
+</div>
+<div id="ref-cutler2011education" class="csl-entry" role="listitem">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Cutler DM, Lleras-Muney A. Education and health: Evaluating theories and evidence. 2006;29–60. </div>
+</div>
+<div id="ref-nhanes2023" class="csl-entry" role="listitem">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Centers for Disease Control and Prevention. National <span>Health</span> and <span>Nutrition</span> <span>Examination</span> <span>Survey</span> [Internet]. 2023. Available from: <a href="https://www.cdc.gov/nchs/nhanes/index.htm">https://www.cdc.gov/nchs/nhanes/index.htm</a></div>
+</div>
+<div id="ref-nhanespackage" class="csl-entry" role="listitem">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Pruim R. <span>NHANES</span>: Data from the <span>US</span> <span>National</span> <span>Health</span> and <span>Nutrition</span> <span>Examination</span> <span>Study</span> [Internet]. 2015. Available from: <a href="https://CRAN.R-project.org/package=NHANES">https://CRAN.R-project.org/package=NHANES</a></div>
+</div>
+<div id="ref-sjoberg2021gtsummary" class="csl-entry" role="listitem">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Sjoberg DD, Whiting K, Curry M, Lavery JA, Larmarange J. <a href="https://doi.org/10.32614/RJ-2021-053">Reproducible summary tables with the <span class="nocase">gtsummary</span> package</a>. The R Journal. 2021;13(1):570–80. </div>
+</div>
+<div id="ref-wickham2016ggplot2" class="csl-entry" role="listitem">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Wickham H. ggplot2: <span>Elegant</span> <span>Graphics</span> for <span>Data</span> <span>Analysis</span> [Internet]. Springer-Verlag New York; 2016. Available from: <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a></div>
+</div>
+</div>
+</section>
+<section id="supplementary-materials" class="level2">
+<h2 class="anchored" data-anchor-id="supplementary-materials">Supplementary Materials</h2>
+<div id="supptbl-subgroup" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-supptbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-supptbl" id="supptbl-subgroup-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table S1: Detailed subgroup analysis results: Association between college education and systolic blood pressure
+</figcaption>
+<div aria-describedby="supptbl-subgroup-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-embed-nb-cell">
+<div id="cell-supp-subgroup" class="cell">
+<div id="supp-subgroup" class="cell-output cell-output-display">
+<div id="zamecuxsek" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zamecuxsek table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#zamecuxsek thead, #zamecuxsek tbody, #zamecuxsek tfoot, #zamecuxsek tr, #zamecuxsek td, #zamecuxsek th {
+  border-style: none;
+}
+
+#zamecuxsek p {
+  margin: 0;
+  padding: 0;
+}
+
+#zamecuxsek .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 14px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#zamecuxsek .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#zamecuxsek .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#zamecuxsek .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#zamecuxsek .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#zamecuxsek .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#zamecuxsek .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#zamecuxsek .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#zamecuxsek .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#zamecuxsek .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#zamecuxsek .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zamecuxsek .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#zamecuxsek .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#zamecuxsek .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#zamecuxsek .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zamecuxsek .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#zamecuxsek .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#zamecuxsek .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#zamecuxsek .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zamecuxsek .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#zamecuxsek .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zamecuxsek .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#zamecuxsek .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zamecuxsek .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zamecuxsek .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zamecuxsek .gt_left {
+  text-align: left;
+}
+
+#zamecuxsek .gt_center {
+  text-align: center;
+}
+
+#zamecuxsek .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#zamecuxsek .gt_font_normal {
+  font-weight: normal;
+}
+
+#zamecuxsek .gt_font_bold {
+  font-weight: bold;
+}
+
+#zamecuxsek .gt_font_italic {
+  font-style: italic;
+}
+
+#zamecuxsek .gt_super {
+  font-size: 65%;
+}
+
+#zamecuxsek .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#zamecuxsek .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#zamecuxsek .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#zamecuxsek .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#zamecuxsek .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#zamecuxsek .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#zamecuxsek .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#zamecuxsek .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#zamecuxsek div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="Subgroup" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Subgroup</th>
+<th id="n" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">n</th>
+<th id="Coefficient-(95%-CI)" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Coefficient (95% CI)</th>
+<th id="p-value" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">p-value</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Subgroup">Male, White</td>
+<td class="gt_row gt_center" headers="n">2311</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-10.5 (-14.4, -6.6)</td>
+<td class="gt_row gt_center" headers="p-value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Subgroup">Female, White</td>
+<td class="gt_row gt_center" headers="n">2386</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-7.8 (-12.3, -3.3)</td>
+<td class="gt_row gt_center" headers="p-value">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Subgroup">Female, Mexican</td>
+<td class="gt_row gt_center" headers="n">247</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-15.9 (-23.3, -8.5)</td>
+<td class="gt_row gt_center" headers="p-value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Subgroup">Male, Hispanic</td>
+<td class="gt_row gt_center" headers="n">191</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-3.0 (-10.6, 4.5)</td>
+<td class="gt_row gt_center" headers="p-value">0.433</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Subgroup">Female, Other</td>
+<td class="gt_row gt_center" headers="n">264</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-17.4 (-24.9, -9.8)</td>
+<td class="gt_row gt_center" headers="p-value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Subgroup">Male, Mexican</td>
+<td class="gt_row gt_center" headers="n">335</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-3.1 (-9.5, 3.3)</td>
+<td class="gt_row gt_center" headers="p-value">0.346</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Subgroup">Male, Black</td>
+<td class="gt_row gt_center" headers="n">358</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-8.2 (-18.0, 1.6)</td>
+<td class="gt_row gt_center" headers="p-value">0.104</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Subgroup">Female, Hispanic</td>
+<td class="gt_row gt_center" headers="n">204</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-11.7 (-20.6, -2.8)</td>
+<td class="gt_row gt_center" headers="p-value">0.011</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Subgroup">Female, Black</td>
+<td class="gt_row gt_center" headers="n">413</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">0.8 (-17.6, 19.3)</td>
+<td class="gt_row gt_center" headers="p-value">0.931</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Subgroup">Male, Other</td>
+<td class="gt_row gt_center" headers="n">251</td>
+<td class="gt_row gt_center" headers="Coefficient (95% CI)">-11.5 (-18.9, -4.0)</td>
+<td class="gt_row gt_center" headers="p-value">0.003</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_footnotes odd">
+<td colspan="4" class="gt_footnote" style="text-align: left;">Coefficient represents difference in mean systolic BP (mmHg); college graduate vs. ≤8th grade education.</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</figure>
+</div>
+<div id="supptbl-threshold" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-supptbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-supptbl" id="supptbl-threshold-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table S2: Sensitivity analysis results: Odds ratios for hypertension at different blood pressure thresholds
+</figcaption>
+<div aria-describedby="supptbl-threshold-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-embed-nb-cell">
+<div id="cell-supp-threshold" class="cell">
+<div id="supp-threshold" class="cell-output cell-output-display">
+<div id="wzokeouhrf" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wzokeouhrf table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#wzokeouhrf thead, #wzokeouhrf tbody, #wzokeouhrf tfoot, #wzokeouhrf tr, #wzokeouhrf td, #wzokeouhrf th {
+  border-style: none;
+}
+
+#wzokeouhrf p {
+  margin: 0;
+  padding: 0;
+}
+
+#wzokeouhrf .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#wzokeouhrf .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wzokeouhrf .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wzokeouhrf .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wzokeouhrf .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wzokeouhrf .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wzokeouhrf .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wzokeouhrf .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wzokeouhrf .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#wzokeouhrf .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#wzokeouhrf .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wzokeouhrf .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wzokeouhrf .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wzokeouhrf .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wzokeouhrf .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wzokeouhrf .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#wzokeouhrf .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#wzokeouhrf .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#wzokeouhrf .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wzokeouhrf .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#wzokeouhrf .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wzokeouhrf .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wzokeouhrf .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wzokeouhrf .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wzokeouhrf .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wzokeouhrf .gt_left {
+  text-align: left;
+}
+
+#wzokeouhrf .gt_center {
+  text-align: center;
+}
+
+#wzokeouhrf .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wzokeouhrf .gt_font_normal {
+  font-weight: normal;
+}
+
+#wzokeouhrf .gt_font_bold {
+  font-weight: bold;
+}
+
+#wzokeouhrf .gt_font_italic {
+  font-style: italic;
+}
+
+#wzokeouhrf .gt_super {
+  font-size: 65%;
+}
+
+#wzokeouhrf .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#wzokeouhrf .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#wzokeouhrf .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#wzokeouhrf .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#wzokeouhrf .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#wzokeouhrf .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#wzokeouhrf .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#wzokeouhrf .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#wzokeouhrf div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="BP-Threshold-(mmHg)" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">BP Threshold (mmHg)</th>
+<th id="a%-Hypertensive" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">% Hypertensive</th>
+<th id="OR-(95%-CI)" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">OR (95% CI)</th>
+<th id="P-value" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">P-value</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="BP Threshold (mmHg)">120</td>
+<td class="gt_row gt_right" headers="% Hypertensive">47.8</td>
+<td class="gt_row gt_right" headers="OR (95% CI)">0.34 (0.27, 0.43)</td>
+<td class="gt_row gt_left" headers="P-value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="BP Threshold (mmHg)">125</td>
+<td class="gt_row gt_right" headers="% Hypertensive">36.0</td>
+<td class="gt_row gt_right" headers="OR (95% CI)">0.36 (0.28, 0.45)</td>
+<td class="gt_row gt_left" headers="P-value">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="BP Threshold (mmHg)">130</td>
+<td class="gt_row gt_right" headers="% Hypertensive">25.2</td>
+<td class="gt_row gt_right" headers="OR (95% CI)">0.31 (0.24, 0.39)</td>
+<td class="gt_row gt_left" headers="P-value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="BP Threshold (mmHg)">135</td>
+<td class="gt_row gt_right" headers="% Hypertensive">18.1</td>
+<td class="gt_row gt_right" headers="OR (95% CI)">0.28 (0.22, 0.37)</td>
+<td class="gt_row gt_left" headers="P-value">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="BP Threshold (mmHg)">140</td>
+<td class="gt_row gt_right" headers="% Hypertensive">13.1</td>
+<td class="gt_row gt_right" headers="OR (95% CI)">0.26 (0.19, 0.35)</td>
+<td class="gt_row gt_left" headers="P-value">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="BP Threshold (mmHg)">145</td>
+<td class="gt_row gt_right" headers="% Hypertensive">8.4</td>
+<td class="gt_row gt_right" headers="OR (95% CI)">0.25 (0.18, 0.34)</td>
+<td class="gt_row gt_left" headers="P-value">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="BP Threshold (mmHg)">150</td>
+<td class="gt_row gt_right" headers="% Hypertensive">5.8</td>
+<td class="gt_row gt_right" headers="OR (95% CI)">0.29 (0.20, 0.43)</td>
+<td class="gt_row gt_left" headers="P-value">&lt;0.001</td>
+</tr>
+</tbody><tfoot>
+<tr class="gt_footnotes odd">
+<td colspan="4" class="gt_footnote">OR adjusted for sex and race/ethnicity. College Graduate vs 8th Grade Education.</td>
+</tr>
+<tr class="gt_sourcenotes even">
+<td colspan="4" class="gt_sourcenote">OR &lt; 1 indicates lower odds of hypertension among college graduates</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</figure>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>

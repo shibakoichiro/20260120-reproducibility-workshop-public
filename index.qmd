@@ -1,0 +1,48 @@
+---
+title: "Reproducible Research Workflow"
+subtitle: "BUSPH EP860"
+---
+
+**January 20, 2026** | 2:00 - 4:50 pm | [Koichiro Shiba](https://koichiroshiba.com/), Boston University School of Public Health
+
+---
+
+## Overview
+
+This hands-on workshop teaches you how to create reproducible research workflows using modern tools. You'll learn to write code and text together, generate publication-ready tables and figures, and track changes with version control.
+
+### What you'll learn
+
+- **Quarto documents** -- Write code and text together, render to HTML, PDF, or Word
+- **Version control** -- Track every change with Git, recover from mistakes
+- **Reproducible coding** -- Write reusable functions with `purrr` and create tables with `gtsummary` and figures with `ggplot2` that auto-update
+- **Manuscript workflow** -- Separate analysis from writing using Quarto Manuscripts
+
+## Opening Slides
+
+::: {.slide-container}
+```{=html}
+<iframe
+  class="slide-embed"
+  src="slides/slides.html"
+  title="Opening Slides">
+</iframe>
+```
+:::
+
+[Open slides in new tab](slides/slides.qmd){target="_blank"}
+
+## Before the workshop
+
+::: {.callout-warning}
+## Complete setup by January 18
+
+Please complete the [Setup Guide](setup.qmd) at least 2 days before the workshop. This takes 30-45 minutes and ensures you're ready to participate.
+:::
+
+## Materials
+
+- [**Setup Guide**](setup.qmd) -- Pre-workshop installation instructions
+- [**Template Repository**](https://github.com/shibakoichiro/reproducible-research-workshop-shiba-template) -- Starting point for hands-on exercises (you'll create your own copy in the Setup Guide)
+- [**Opening Slides**](slides/slides.qmd) -- 30-minute overview presentation
+- [**Hands-on Workshop**](parts/part1.qmd) -- Step-by-step instructions for each part (Parts 1-8)

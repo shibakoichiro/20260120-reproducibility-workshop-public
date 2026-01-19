@@ -1,0 +1,77 @@
+/* Slide embed styles */
+.slide-embed {
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  width: 100%;
+  aspect-ratio: 16/9;
+  max-height: 70vh;
+}
+
+.slide-container {
+  margin: 1.5rem 0;
+}
+
+/* Grid layouts for feature cards */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Feature cards */
+.feature-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.feature-card h4 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+/* Step cards for hands-on exercises */
+.step-card {
+  margin: 1.5rem 0;
+}
+
+.step-card h4 {
+  margin-top: 0;
+}
+
+/* Mermaid diagram styling */
+.mermaid {
+  background: transparent !important;
+}
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon {
+  fill: #fff !important;
+  stroke: #333 !important;
+}
+
+.mermaid .cluster rect {
+  fill: #f8f9fa !important;
+  stroke: #dee2e6 !important;
+}
+
+.mermaid .edgeLabel {
+  background-color: #fff !important;
+}

@@ -1,0 +1,77 @@
+---
+title: "Your Manuscript Title"
+author:
+  - name: "YOUR NAME"
+    affiliations:
+      - name: Boston University School of Public Health
+---
+
+## Abstract
+
+<!-- Write a brief summary of your research -->
+
+**Background:**
+
+**Methods:**
+
+**Results:**
+
+**Conclusions:**
+
+## Introduction
+
+<!-- Introduce the research problem and objectives -->
+
+## Methods
+
+### Study Population
+
+<!-- Describe the NHANES data and inclusion/exclusion criteria -->
+
+### Statistical Analysis
+
+<!-- Describe your analysis approach -->
+
+## Results
+
+### Participant Characteristics
+
+<!-- Reference Table 1 from analysis.qmd -->
+
+<!-- TODO: Uncomment the embed below after creating Table 1 in analysis.qmd -->
+<!-- As shown in @tbl-demographics, ... -->
+
+<!-- {{< embed analysis.qmd#tbl-demographics >}} -->
+
+### Main Findings
+
+<!-- Reference your main figure -->
+
+<!-- TODO: Uncomment the embed below after creating Figure 1 in analysis.qmd -->
+<!-- @fig-main shows ... -->
+
+<!-- {{< embed analysis.qmd#fig-main >}} -->
+
+<!-- Reference your main analysis table -->
+
+<!-- TODO: Uncomment the embed below after creating Table 2 in analysis.qmd -->
+<!-- The results of our analysis are presented in @tbl-main. -->
+
+<!-- {{< embed analysis.qmd#tbl-main >}} -->
+
+## Discussion
+
+<!-- Interpret your findings -->
+
+### Strengths and Limitations
+
+<!-- Discuss strengths and limitations -->
+
+### Conclusions
+
+<!-- Summarize key findings and implications -->
+
+## References
+
+::: {#refs}
+:::

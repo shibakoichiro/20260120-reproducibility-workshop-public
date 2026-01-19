@@ -1,0 +1,37 @@
+# Quarto / build artifacts (never commit in public snapshot)
+/.quarto/
+**/.quarto/
+/_freeze/
+**/_freeze/
+/_manuscript/
+**/_manuscript/
+/docs/
+**/docs/
+**/site_libs/
+
+# Allow committing the pre-rendered manuscript example (used for Pages without requiring R in CI)
+!examples/nhanes-manuscript/_manuscript/
+!examples/nhanes-manuscript/_manuscript/**
+
+# Notebook outputs and derived files
+*.ipynb
+**/*.ipynb
+*.out.ipynb
+**/*.out.ipynb
+
+# Quarto generated folders
+*_files/
+**/*_files/
+
+# iCloud sync duplicates (conflict copies)
+* 2
+* 2.*
+* 3
+* 3.*
+* 4
+* 4.*
+
+# OS / editor
+.DS_Store
+.Rhistory
+.here

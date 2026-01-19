@@ -1,0 +1,166 @@
+---
+title: "Education Level and Blood Pressure: Analysis of NHANES 2009-2012"
+author:
+  - name: "Your Name"
+    affiliations:
+      - name: Boston University School of Public Health
+format:
+  html: default
+  docx: default
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+
+library(tidyverse)
+library(here)
+
+# Load data and results for inline code
+data_clean <- readRDS(here("results", "data_clean.rds"))
+model_fit <- readRDS(here("results", "model_fit.rds"))
+
+# Extract key numbers for inline reporting
+n_total <- nrow(data_clean)
+n_female <- sum(data_clean$Gender == "female")
+pct_female <- round(n_female / n_total * 100, 1)
+mean_age <- round(mean(data_clean$Age), 1)
+sd_age <- round(sd(data_clean$Age), 1)
+mean_bp <- round(mean(data_clean$BPSysAve), 1)
+sd_bp <- round(sd(data_clean$BPSysAve), 1)
+
+# Extract regression coefficient for college grad
+coef_college <- coef(model_fit)["EducationCollege Grad"]
+```
+
+## Abstract
+
+**Background:** Socioeconomic factors, including educational attainment, have been associated with cardiovascular health outcomes.
+This study examines the association between education level and systolic blood pressure using nationally representative data.
+
+**Methods:** We analyzed data from `r n_total` adults aged 20 years and older from the National Health and Nutrition Examination Survey (NHANES) 2009-2012.
+Linear regression was used to estimate the association between education level and systolic blood pressure, adjusting for sex and race/ethnicity.
+
+**Results:** Higher education levels were associated with lower systolic blood pressure.
+Compared to participants with less than 9th grade education, college graduates had lower mean systolic blood pressure (coefficient: `r round(coef_college, 1)` mmHg).
+
+**Conclusions:** Education level is inversely associated with blood pressure in U.S. adults.
+These findings highlight the importance of addressing social determinants of cardiovascular health.
+
+## Introduction
+
+Hypertension affects nearly half of all adults in the United States and is a major risk factor for cardiovascular disease [@whelton2018hypertension].
+Socioeconomic factors, including educational attainment, have been consistently associated with cardiovascular health outcomes [@kaplan1996socioeconomic; @pampel2010socioeconomic].
+
+Education may influence blood pressure through multiple pathways, including health behaviors, access to healthcare, and chronic stress [@cutler2011education].
+Understanding the relationship between education and blood pressure can inform public health interventions aimed at reducing cardiovascular health disparities.
+
+This study examines the association between education level and systolic blood pressure using data from the National Health and Nutrition Examination Survey (NHANES), a nationally representative survey of the U.S. civilian population [@nhanes2023].
+
+## Methods
+
+### Study Population
+
+We analyzed data from the NHANES 2009-2012 cycles, accessed through the R package `NHANES` [@nhanespackage].
+The NHANES dataset contains `r format(n_total, big.mark = ",")` observations that have been resampled to remove oversampling effects, allowing the data to be treated as a simple random sample for educational purposes.
+
+We included adults aged 20 years and older with complete data on education level, blood pressure measurements, sex, and race/ethnicity.
+The final analytic sample included `r format(n_total, big.mark = ",")` participants.
+
+### Measures
+
+**Outcome:** Systolic blood pressure was measured as the average of up to three readings (variable: `BPSysAve`).
+
+**Exposure:** Educational attainment was categorized as: 8th grade or less, 9-11th grade, high school graduate, some college, or college graduate.
+
+**Covariates:** We adjusted for sex (male/female) and race/ethnicity (Mexican, Hispanic, White, Black, Other).
+
+### Statistical Analysis
+
+We used descriptive statistics to characterize the study population.
+Linear regression was used to estimate the association between education level and systolic blood pressure, with adjustment for sex and race/ethnicity.
+
+All analyses were conducted in R using the `gtsummary` package for tables [@sjoberg2021gtsummary] and `ggplot2` for figures [@wickham2016ggplot2].
+
+## Results
+
+### Participant Characteristics
+
+The study included `r format(n_total, big.mark = ",")` participants.
+The mean age was `r mean_age` years (SD = `r sd_age`), and `r pct_female`% were female.
+The mean systolic blood pressure was `r mean_bp` mmHg (SD = `r sd_bp`).
+
+Participant characteristics by education level are presented in @tbl-demographics.
+
+{{< embed notebooks/analysis.qmd#tbl-demographics >}}
+
+### Blood Pressure Distribution
+
+@fig-main shows the distribution of systolic blood pressure by education level.
+Blood pressure generally decreased with increasing education, with college graduates having the lowest mean blood pressure.
+
+{{< embed notebooks/analysis.qmd#fig-main >}}
+
+### Association Between Education and Blood Pressure
+
+Results of the linear regression analysis are presented in @tbl-regression.
+Compared to participants with 8th grade education or less, those with higher education levels had lower systolic blood pressure.
+College graduates had a coefficient of `r round(coef_college, 1)` mmHg compared to the reference group.
+
+{{< embed notebooks/analysis.qmd#tbl-regression >}}
+
+### Subgroup Analysis
+
+To examine whether the education-blood pressure association varied across demographic groups, we conducted subgroup analyses stratified by sex and race/ethnicity (@fig-subgroup).
+The inverse association between college education and blood pressure was observed across most subgroups, though the magnitude varied.
+Detailed numerical results are provided in @supptbl-subgroup.
+
+{{< embed notebooks/analysis.qmd#fig-subgroup >}}
+
+### Sensitivity Analysis
+
+We examined the robustness of our findings using different blood pressure thresholds to define hypertension (@fig-threshold).
+The protective association of higher education was consistent across thresholds ranging from 120 to 150 mmHg.
+Detailed numerical results are provided in @supptbl-threshold.
+
+{{< embed notebooks/analysis.qmd#fig-threshold >}}
+
+## Discussion
+
+This study found an inverse association between educational attainment and systolic blood pressure in a nationally representative sample of U.S. adults.
+Participants with higher education levels had lower mean blood pressure compared to those with less education.
+
+These findings are consistent with previous research documenting socioeconomic gradients in cardiovascular health [@kaplan1996socioeconomic].
+Several mechanisms may explain this relationship, including differences in health behaviors, access to healthcare, occupational exposures, and chronic stress associated with socioeconomic position [@pampel2010socioeconomic; @cutler2011education].
+
+### Strengths and Limitations
+
+Strengths of this study include the use of nationally representative data and objective blood pressure measurements.
+However, several limitations should be noted.
+First, this is a cross-sectional analysis, limiting our ability to establish causal relationships.
+Second, we did not account for the complex survey design (sampling weights) as this analysis was conducted for educational purposes.
+Third, residual confounding by unmeasured factors cannot be ruled out.
+
+### Conclusions
+
+Education level is inversely associated with blood pressure in U.S. adults.
+These findings highlight the importance of addressing social determinants of health in efforts to reduce cardiovascular disease burden.
+
+## References
+
+::: {#refs}
+:::
+
+## Supplementary Materials
+
+::: {#supptbl-subgroup}
+{{< embed notebooks/analysis.qmd#supp-subgroup >}}
+
+Detailed subgroup analysis results: Association between college education and systolic blood pressure
+:::
+
+::: {#supptbl-threshold}
+{{< embed notebooks/analysis.qmd#supp-threshold >}}
+
+Sensitivity analysis results: Odds ratios for hypertension at different blood pressure thresholds
+:::

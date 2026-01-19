@@ -1,0 +1,91 @@
+---
+title: "Part 1: Why Reproducibility?"
+subtitle: "The foundation of reliable research"
+---
+
+## What is Reproducibility?
+
+At its core, reproducibility means:
+
+> **Same data** + **same code** = **same results**
+
+But it's not just about allowing others to verify your work. It's about being able to reproduce your *own* analysis — whether that's next week, next month, or when Reviewer 2 asks for changes six months from now.
+
+::: {.callout-tip}
+## Ask yourself
+Can you reproduce your own analysis from 6 months ago? Do you remember which version of the data you used? Which script ran in which order?
+:::
+
+## Common Problems
+
+These scenarios might sound familiar:
+
+| Scenario | Root Cause |
+|----------|------------|
+| "Table 1 doesn't match the text" — your advisor | Manual copy-paste |
+| `final_v3_FINAL.docx` — which is the real final? | No version control |
+| Can't reproduce your 3-month-old results | Code and data separated, no documentation |
+| "Just change X" leads to hours of work | Manual workflow, no automation |
+
+::: {.callout-note}
+## The common thread
+All these problems share a root cause: **manual work**. Every time you copy a number, rename a file manually, or try to remember what you did, you are prone to make errors. This is inevitable, as we all make mistakes as humans.
+:::
+
+## Today's Core Message
+
+> **Three principles for reproducible research:**
+>
+> 1. **Automate** — Generate outputs from code, not copy-paste
+> 2. **Integrate** — Keep code and text together in one place
+> 3. **Track** — Version control everything with Git
+
+This workshop will show you **how** to do this in practice.
+
+::: {.grid-2}
+::: {.feature-card}
+#### ❌ Before
+```
+project/
+├── analysis_v1.docx
+├── analysis_v2.docx
+├── analysis_v3_FINAL.docx
+├── analysis_v3_FINAL_revised.docx  ← ?
+└── figures/
+    ├── fig1_old.png
+    ├── fig1_new.png
+    └── fig1_FINAL.png
+```
+:::
+
+::: {.feature-card}
+#### ✅ After
+```
+project/
+├── analysis.qmd  ← Single source
+├── _quarto.yml
+└── .git/         ← Full history
+
+↓ quarto render
+report.html / .docx / .pdf
+```
+:::
+:::
+
+| Principle | Tools |
+|-----------|-------|
+| **Automate** | gtsummary, ggplot2, R functions |
+| **Integrate** | Quarto (.qmd files) |
+| **Track** | Git + GitHub |
+
+## Why Plain Text?
+
+All the tools we'll use today work with **plain text** files (`.qmd`, `.R`, `.yml`). This matters because:
+
+- **Git-Friendly** — Plain text shows exactly what changed between versions. Binary formats just show "file changed."
+- **AI-Friendly** — AI tools can read, understand, and help you write plain text code
+- **Future-Proof** — Plain text will always be readable. Can you open a 1995 Word document?
+
+---
+
+[Part 2: Project Setup](part2.qmd) →

@@ -1,0 +1,497 @@
+---
+title: "Part 4: DRY Coding"
+subtitle: "Functions and iteration to avoid copy-paste"
+---
+
+## Learning Goals
+
+By the end of this section, you will:
+
+- Understand the **DRY principle** (Don't Repeat Yourself)
+- **Transform** repetitive code into a **function**
+- Use **purrr** to iterate over multiple groups
+
+## The Problem: Copy-Paste
+
+You need to run the same analysis for multiple subgroups:
+
+1. Run analysis for **males** → copy code
+2. Paste, change to **females** → copy code
+3. Paste, change to **age 65+**
+
+::: {.callout-warning}
+## What could go wrong?
+You change one variable but forget to change another. Now your "female" results include male data. This error is hard to spot and easy to make.
+:::
+
+---
+
+## DRY: Don't Repeat Yourself
+
+The principle is simple:
+
+> If you do something **twice**, make it a **function**.
+>
+> If you do it for **multiple items**, use **iteration**.
+
+This reduces errors and makes your code easier to maintain.
+
+```{mermaid}
+flowchart TD
+    A["Same logic repeated?"] --> B["Create a function"]
+    B --> C{"Apply to many items?"}
+    C -->|"Yes"| D["Use iteration<br/>(purrr::map)"]
+    C -->|"No"| E["Call function directly"]
+    D --> F["One place to fix bugs"]
+    E --> F
+```
+
+---
+
+## Setup: Load Your Cleaned Data
+
+First, load the cleaned data you created in Part 3:
+
+::: {.step-card}
+#### Add this to your `analysis.qmd`
+
+```{.r filename="analysis.qmd"}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(broom)
+library(here)
+
+# Load the cleaned data from Part 3
+data_clean <- readRDS(here("results", "data_clean.rds"))
+
+# Verify it loaded correctly
+dim(data_clean)
+```
+:::
+
+---
+
+## The Problem: Copy-Paste in Practice
+
+Before we dive deeper, let's see why copy-paste is risky with a realistic example.
+
+::: {.callout-note}
+## Instructor Demo
+Your instructor will walk through this example and ask you a question.
+:::
+
+::: {.step-card}
+#### The scenario
+
+Your advisor asks: *"Calculate hypertension prevalence for each education level."*
+
+You start with "8th Grade":
+
+```r
+# Hypertension analysis: 8th Grade
+eighth_grade <- data_clean |>
+  filter(Education == "8th Grade") |>
+  summarize(
+    education = "8th Grade",
+    n = n(),
+    high_bp_n = sum(BPSysAve >= 140, na.rm = TRUE),
+    high_bp_pct = 100 * high_bp_n / n
+  )
+
+# Check sample size
+if (eighth_grade$n < 30) {
+  warning("Small sample size for 8th Grade group")
+}
+
+# Compare to overall population
+overall_pct <- 100 * sum(data_clean$BPSysAve >= 140, na.rm = TRUE) / nrow(data_clean)
+
+cat("Education: 8th Grade (N=", eighth_grade$n, ")\n", sep = "")
+cat("Prevalence: ", round(eighth_grade$high_bp_pct, 1), "%\n", sep = "")
+cat("vs Overall: ", ifelse(eighth_grade$high_bp_pct > overall_pct, "Higher", "Lower"), "\n", sep = "")
+
+# Store for combining later
+results_8th <- list(
+  group = "8th Grade",
+  stats = eighth_grade,
+  diff = eighth_grade$high_bp_pct - overall_pct
+)
+```
+:::
+
+::: {.step-card}
+#### Your task
+
+**Question**: If you want to repeat this analysis for **"High School"**, how many places in the code need to change?
+
+Take 60 seconds to count carefully. Write down your answer.
+
+::: {.callout-warning collapse="true"}
+## Click to reveal answer
+
+**12 places!** And they use **3 different naming conventions**:
+
+**Pattern A: String with space** `"8th Grade"`
+
+1. Line 3: filter condition
+2. Line 5: summarize label
+3. Line 13: warning message
+4. Line 18: cat output
+5. Line 24: list element `group = `
+
+**Pattern B: Variable with underscore** `eighth_grade`
+
+6. Line 2: assignment
+7. Line 11: in if condition
+8. Line 18: `eighth_grade$n`
+9. Line 19: `eighth_grade$high_bp_pct`
+10. Line 25: `stats = eighth_grade`
+11. Line 26: `eighth_grade$high_bp_pct`
+
+**Pattern C: Abbreviation** `results_8th`
+
+12. Line 23: → `results_hs`? `results_high`? `results_high_school`?
+
+**The trap:** Each pattern requires a separate find-replace:
+
+- `"8th Grade"` → `"High School"` (5 places)
+- `eighth_grade` → `high_school` (6 places)
+- `results_8th` → ??? (no obvious answer)
+
+And some places are easy to miss: the warning message buried in an if-block, or the list element at the end.
+:::
+:::
+
+::: {.callout-tip}
+## The insight
+Real code has **mixed naming patterns** that can't be fixed with simple find-replace. Functions eliminate this entire category of bugs.
+:::
+
+---
+
+## Stage 1: From Repetition to Function
+
+Now let's tackle a real epidemiology problem: **running the same model for multiple outcomes**.
+
+Your advisor asks: *"Check whether education is associated with both blood pressure and BMI."*
+
+::: {.step-card}
+#### The repetitive approach
+
+```{.r filename="analysis.qmd"}
+#| label: repetitive-regression
+#| eval: false
+
+library(broom)  # tidy() function to convert model output to data frame
+
+# Model for blood pressure
+model_bp <- data_clean |>
+  lm(BPSysAve ~ Education + Age + Gender, data = _)
+
+# tidy() converts model output to a clean data frame with columns:
+#   term, estimate, std.error, statistic, p.value, conf.low, conf.high
+# str_detect() finds rows where "term" contains "Education"
+tidy(model_bp, conf.int = TRUE) |>
+  filter(str_detect(term, "Education"))
+
+# Model for BMI (copy-paste and change outcome variable...)
+model_bmi <- data_clean |>
+  lm(BMI ~ Education + Age + Gender, data = _)
+
+tidy(model_bmi, conf.int = TRUE) |>
+  filter(str_detect(term, "Education"))
+```
+:::
+
+---
+
+## Stage 2: Create a Function
+
+The **same** parts become the **function body**. The **different** part becomes an **argument**.
+
+::: {.step-card}
+#### Build the function
+
+Add this to your `analysis.qmd`:
+
+```{.r filename="analysis.qmd"}
+#| label: define-regression-function
+
+library(broom)
+
+# Function to run education model for any outcome
+fit_education_model <- function(data, outcome_var) {
+  # as.formula() + paste() creates formula from string
+  # e.g., "BPSysAve" becomes: BPSysAve ~ Education + Age + Gender
+  formula <- as.formula(paste(outcome_var, "~ Education + Age + Gender"))
+
+  data |>
+    lm(formula, data = _) |>
+    # tidy() converts lm output to a data frame
+    tidy(conf.int = TRUE) |>
+    # Keep only Education-related coefficients
+    filter(str_detect(term, "Education")) |>
+    # Add column to track which outcome this is
+    mutate(outcome = outcome_var)
+}
+```
+
+::: {.callout-tip}
+## Why this function is useful
+- The model fitting + tidying + filtering is **4 steps**
+- Copy-pasting risks forgetting to change the outcome somewhere
+- With a function, you specify the outcome **once**
+:::
+:::
+
+::: {.step-card}
+#### Use the function
+
+```{.r filename="analysis.qmd"}
+#| label: use-regression-function
+
+# Now the analysis is simple and clear
+data_clean |> fit_education_model("BPSysAve")
+data_clean |> fit_education_model("BMI")
+```
+
+**Notice:** `data` is the **first argument**, so we can use the pipe `|>`.
+:::
+
+---
+
+## Stage 3: Automate with purrr
+
+What if you have 5 outcomes to analyze? That's where `purrr::map()` comes in.
+
+```{mermaid}
+%%| fig-width: 8
+flowchart LR
+    subgraph input["outcomes (vector)"]
+        direction TB
+        O1["'BPSysAve'"]
+        O2["'BMI'"]
+        O3["'Weight'"]
+    end
+
+    M["map()"]
+
+    subgraph func["fit_education_model()"]
+        F["Applied to each"]
+    end
+
+    subgraph output["Results (list → data frame)"]
+        direction TB
+        R1["BP coefficients"]
+        R2["BMI coefficients"]
+        R3["Weight coefficients"]
+    end
+
+    input --> M
+    M --> func
+    func --> output
+```
+
+::: {.step-card}
+#### Understand map()
+
+`map()` applies a function to each element of a list:
+
+```r
+# Instead of:
+data_clean |> fit_education_model("BPSysAve")
+data_clean |> fit_education_model("BMI")
+
+# Write:
+map(c("BPSysAve", "BMI"), \(y) data_clean |> fit_education_model(y))
+```
+
+Think of it as: **"For each item in this list, do this thing."**
+:::
+
+::: {.step-card}
+#### Use map() to iterate
+
+```{.r filename="analysis.qmd"}
+#| label: use-map
+
+library(purrr)
+
+outcomes <- c("BPSysAve", "BMI")
+
+# map() runs the function for each element in outcomes
+# \(y) is shorthand for function(y) - an "anonymous function"
+# list_rbind() stacks the results into one data frame
+results <- map(outcomes, \(y) data_clean |> fit_education_model(y)) |>
+  list_rbind()
+
+results
+```
+
+**What `\(y)` means:** "For each item `y` in the list, run this code."
+
+**What happened:** One function + one `map()` call → results for all outcomes!
+:::
+
+::: {.callout-note collapse="true"}
+## Three ways to specify functions in map()
+
+You'll see different syntaxes in tutorials and documentation. All three do the same thing:
+```r
+outcomes <- c("BPSysAve", "BMI")
+
+# 1. Lambda function (R 4.1+) — recommended for new code
+map(outcomes, \(y) data_clean |> fit_education_model(y))
+
+# 2. Formula syntax (purrr-specific) — uses .x as placeholder
+map(outcomes, ~ data_clean |> fit_education_model(.x))
+
+# 3. Named function — when no extra arguments needed
+#    This works because fit_education_model() can accept just the outcome
+#    (but our version needs data too, so this won't work here)
+map(outcomes, fit_education_model)  # passes each outcome as first argument
+```
+
+**Which to use?**
+
+- `\(x)` — Modern, works everywhere in R, clear intent
+- `~ .x` — Older purrr style, still common in existing code
+- Named function — Cleanest when your function signature matches exactly
+:::
+
+---
+
+## Stage 4 (Advanced): Subgroup Analysis
+
+What if you want to run the model **separately for each gender**?
+This requires a different approach using `nest_by()`.
+
+::: {.step-card}
+#### A function for stratified analysis
+
+```{.r filename="analysis.qmd"}
+#| label: subgroup-function
+
+# Function to run model within each level of a grouping variable
+fit_model_by_group <- function(data, group_var) {
+  data |>
+    # nest_by() splits data by group, storing each subset in a "data" column
+    # e.g., for Gender: one row for "male" with all male data,
+    #                   one row for "female" with all female data
+    nest_by({{ group_var }}) |>
+    # reframe() runs the model on each group's data and returns multiple rows
+    # (summarize() expects 1 row per group; reframe() allows many)
+    reframe(
+      tidy(lm(BPSysAve ~ Education + Age, data = data), conf.int = TRUE)
+    ) |>
+    # Keep only the College Grad coefficient (vs 8th Grade reference)
+    filter(term == "EducationCollege Grad")
+}
+```
+
+::: {.callout-note}
+## What's `nest_by()`?
+`nest_by()` splits the data by group and stores each subset in a list-column.
+The model then runs on each group's data automatically — no manual filtering needed.
+:::
+:::
+
+::: {.step-card}
+#### Use it with different grouping variables
+
+```{.r filename="analysis.qmd"}
+#| label: use-subgroup-function
+
+# Stratify by Gender
+data_clean |> fit_model_by_group(Gender)
+
+# Stratify by Race — same function, different variable!
+data_clean |> fit_model_by_group(Race1)
+```
+
+**The power of abstraction:** One function handles any grouping variable.
+:::
+
+::: {.callout-tip collapse="true"}
+## Going further: Iterate over multiple grouping variables with map()
+
+Just like Stage 3, you can use `map()` to run the analysis for multiple grouping variables at once:
+
+```r
+library(rlang)  # for syms()
+
+group_vars <- c("Gender", "Race1")
+
+# syms() converts strings to symbols, !! unquotes them
+results_by_group <- map(
+  syms(group_vars),
+  \(var) data_clean |> fit_model_by_group(!!var)
+) |>
+  list_rbind()
+
+results_by_group
+```
+
+**Why `syms()` and `!!`?**
+
+Our function uses `{{ group_var }}` which expects a bare column name like `Gender`, not a string like `"Gender"`. To iterate with `map()`:
+
+1. `syms(group_vars)` converts `c("Gender", "Race1")` into symbols
+2. `!!var` "unquotes" the symbol so it's evaluated as a column name
+
+This is **tidy evaluation** — a powerful but advanced topic. For now, just know that this pattern lets you iterate over column names stored in a vector.
+:::
+
+---
+
+## When to Use Functions
+
+| Situation | Action |
+|-----------|--------|
+| Copy-paste **once** | Maybe OK |
+| Copy-paste **twice** | **Make a function** |
+| Apply to a list of items | Use `map()` |
+| Need flexibility | Add arguments |
+
+---
+
+## Why DRY Matters for Reproducibility
+
+| Without functions | With functions |
+|-------------------|----------------|
+| Bug fix? Edit 10 places | Bug fix? Edit 1 place |
+| New subgroup? Copy-paste again | New subgroup? Add to list |
+| Methods change? Hunt for all copies | Methods change? Update function |
+
+::: {.callout-tip}
+## Key insight
+Functions make your analysis a **system**, not a collection of scripts.
+:::
+
+---
+
+## Real-World Example: Quantitative Bias Analysis
+
+These DRY techniques are especially powerful when you need to run the same analysis across **many scenarios** — like in quantitative bias analysis.
+
+::: {.callout-tip}
+## See it in action
+Check out this [complete example](../examples/Bias_analysis_reproducible.html) that uses functions and `purrr` to iterate bias analysis over 16 different parameter combinations, automatically generating a summary table exported to Word.
+:::
+
+---
+
+## Commit Your Progress
+
+Save your work before moving to tables and figures:
+
+1. Go to **Source Control** panel
+2. Stage `analysis.qmd`
+3. Write a commit message describing your changes
+4. Click **Commit**
+
+---
+
+← [Part 3: Quarto Basics](part3.qmd) | [Part 5: Tables & Figures](part5.qmd) →

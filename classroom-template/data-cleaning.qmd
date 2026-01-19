@@ -1,0 +1,59 @@
+---
+title: "Data Cleaning"
+author: "YOUR NAME"
+date: today
+format: html
+---
+
+## Overview
+
+This document loads and cleans the NHANES data for analysis.
+
+## Setup
+
+```{r}
+#| message: false
+
+library(tidyverse)
+library(NHANES)
+library(here)
+```
+
+## Load Data
+
+```{r}
+# TODO: Load the NHANES data from the package
+# data("NHANES")
+# head(NHANES)
+```
+
+## Data Cleaning
+
+```{r}
+# TODO: Clean the data
+# - Select relevant variables (ID, Age, Gender, Race1, Education, BPSysAve)
+# - Filter to adults (Age >= 20)
+# - Remove missing values
+# - Order education levels
+
+# data_clean <- NHANES |>
+#   select(...) |>
+#   filter(...) |>
+#   drop_na() |>
+#   mutate(...)
+```
+
+## Save Cleaned Data
+
+```{r}
+# TODO: Save the cleaned dataset as .rds
+# saveRDS(data_clean, here("results", "data_clean.rds"))
+```
+
+## Summary
+
+```{r}
+# TODO: Check your cleaned data
+# dim(data_clean)
+# head(data_clean)
+```

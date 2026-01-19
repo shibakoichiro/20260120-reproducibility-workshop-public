@@ -1,0 +1,79 @@
+---
+title: "Data Cleaning"
+author: "Workshop Run-Through"
+date: today
+format: html
+---
+
+This document contains the data cleaning code from **Part 3** of the workshop.
+
+## Setup
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(NHANES)
+library(here)
+```
+
+## Load Data
+
+```{r}
+#| label: load-data
+
+# Load the NHANES package (contains the dataset we'll use)
+library(NHANES)
+
+# Load the NHANES data into our R environment
+data("NHANES")
+
+# Preview the first few rows to understand the data structure
+head(NHANES)
+```
+
+## Clean Data
+
+```{r}
+#| label: clean-data
+
+# Clean the NHANES data for our analysis
+data_clean <- NHANES |>
+  # Keep only the variables we need for this analysis
+  select(ID, Age, Gender, Race1, Education, BPSysAve, BMI, Weight) |>
+  # Restrict to adults (children have different BP norms)
+  filter(Age >= 20) |>
+  # Remove rows with any missing values (complete case analysis)
+  drop_na() |>
+  # Set education levels in logical order (for proper ordering in plots/tables)
+  mutate(
+    Education = factor(Education, levels = c(
+      "8th Grade", "9 - 11th Grade", "High School",
+      "Some College", "College Grad"
+    ))
+  )
+
+# Check the result: how many rows and columns?
+dim(data_clean)
+
+# Preview the cleaned data
+head(data_clean)
+```
+
+## Save Data
+
+```{r}
+#| label: save-data
+
+# Create results folder if it doesn't exist yet
+dir.create(here("results"), showWarnings = FALSE)
+
+# Save the cleaned data to the results folder
+# Other scripts will load this file instead of re-running data cleaning
+saveRDS(data_clean, here("results", "data_clean.rds"))
+```
+
+## Summary
+
+Cleaned data saved to `results/data_clean.rds` with `r nrow(data_clean)` participants.

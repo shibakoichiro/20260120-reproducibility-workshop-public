@@ -1,0 +1,510 @@
+---
+title: "Analysis"
+author: "Workshop Run-Through"
+date: today
+format: html
+html-table-processing: none
+---
+
+This document contains the analysis code from **Parts 4-5** of the workshop.
+
+## Setup
+
+```{r}
+#| label: setup
+#| message: false
+
+library(tidyverse)
+library(broom)
+library(gtsummary)
+library(gt)
+library(purrr)
+library(here)
+
+# Load the cleaned data from Part 3
+data_clean <- readRDS(here("results", "data_clean.rds"))
+
+# Verify it loaded correctly
+dim(data_clean)
+```
+
+---
+
+# Part 4: DRY Coding
+
+## Create a Reusable Function (Part 4)
+
+Instead of copy-pasting code for different outcomes, we create a function.
+
+```{r}
+#| label: define-regression-function
+
+# Function to run education model for any outcome
+fit_education_model <- function(data, outcome_var) {
+  # as.formula() + paste() creates formula from string
+  # e.g., "BPSysAve" becomes: BPSysAve ~ Education + Age + Gender
+  formula <- as.formula(paste(outcome_var, "~ Education + Age + Gender"))
+
+  data |>
+    lm(formula, data = _) |>
+    # tidy() converts lm output to a data frame
+    tidy(conf.int = TRUE) |>
+    # Keep only Education-related coefficients
+    filter(str_detect(term, "Education")) |>
+    # Add column to track which outcome this is
+    mutate(outcome = outcome_var)
+}
+```
+
+### Use the Function
+
+```{r}
+#| label: use-regression-function
+
+# Now the analysis is simple and clear
+data_clean |> fit_education_model("BPSysAve")
+data_clean |> fit_education_model("BMI")
+```
+
+---
+
+## Iterate with purrr::map() (Part 4)
+
+```{r}
+#| label: use-map
+
+outcomes <- c("BPSysAve", "BMI")
+
+# map() runs the function for each element in outcomes
+# \(y) is shorthand for function(y) - an "anonymous function"
+# list_rbind() stacks the results into one data frame
+results <- map(outcomes, \(y) data_clean |> fit_education_model(y)) |>
+  list_rbind()
+
+results
+```
+
+---
+
+## Subgroup Analysis with nest_by() (Part 4)
+
+```{r}
+#| label: subgroup-function
+
+# Function to run model within each level of a grouping variable
+fit_model_by_group <- function(data, group_var) {
+  data |>
+    # nest_by() splits data by group, storing each subset in a "data" column
+    nest_by({{ group_var }}) |>
+    # reframe() runs the model on each group's data and returns multiple rows
+    reframe(
+      tidy(lm(BPSysAve ~ Education + Age, data = data), conf.int = TRUE)
+    ) |>
+    # Keep only the College Grad coefficient (vs 8th Grade reference)
+    filter(term == "EducationCollege Grad")
+}
+```
+
+### Use it with different grouping variables
+
+```{r}
+#| label: use-subgroup-function
+
+# Stratify by Gender
+data_clean |> fit_model_by_group(Gender)
+
+# Stratify by Race — same function, different variable!
+data_clean |> fit_model_by_group(Race1)
+```
+
+---
+
+# Part 5: Tables & Figures
+
+## Table 1: Demographics Table (Part 5)
+
+### Basic Version
+
+```{r}
+#| label: tbl-demographics
+#| tbl-cap: "Participant characteristics by education level"
+
+data_clean |>
+  select(Education, Age, Gender, Race1, BPSysAve) |>
+  tbl_summary(by = Education)
+```
+
+### Customized Version
+
+```{r}
+#| label: tbl-demographics-custom
+#| tbl-cap: "Participant characteristics by education level (customized)"
+
+data_clean |>
+  mutate(Gender = str_to_title(Gender)) |>
+  select(Education, Age, Gender, Race1, BPSysAve) |>
+  tbl_summary(
+    by = Education,
+    statistic = list(
+      all_continuous() ~ "{mean} ({sd})",
+      all_categorical() ~ "{n} ({p}%)"
+    ),
+    label = list(
+      Age ~ "Age (years)",
+      Gender ~ "Sex",
+      Race1 ~ "Race/Ethnicity",
+      BPSysAve ~ "Systolic BP (mmHg)"
+    ),
+    missing = "no"
+  ) |>
+  add_overall() |>
+  bold_labels()
+```
+
+---
+
+## Figure 1: Blood Pressure by Education (Part 5)
+
+```{r}
+#| label: fig-bp-education
+#| fig-cap: "Distribution of systolic blood pressure by education level"
+#| fig-width: 7
+#| fig-height: 5
+
+data_clean |>
+  ggplot(aes(x = Education, y = BPSysAve, fill = Education)) +
+  geom_boxplot(alpha = 0.7) +
+  stat_summary(
+    fun = mean,
+    geom = "point",
+    shape = 18,
+    size = 3,
+    color = "darkred"
+  ) +
+  labs(
+    x = "Education Level",
+    y = "Systolic Blood Pressure (mmHg)",
+    title = "Blood Pressure Distribution by Education Level"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(
+    legend.position = "none",
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+---
+
+## Fit Regression Model (Part 5)
+
+```{r}
+#| label: fit-model
+
+# Model: Blood pressure ~ Education + covariates
+model_fit <- lm(BPSysAve ~ Education + Gender + Race1, data = data_clean)
+
+# View the results
+summary(model_fit)
+```
+
+---
+
+## Table 2: Regression Table (Part 5)
+
+```{r}
+#| label: tbl-regression
+#| tbl-cap: "Association between education level and systolic blood pressure"
+
+model_fit |>
+  tbl_regression(
+    label = list(
+      Education ~ "Education level",
+      Gender ~ "Sex",
+      Race1 ~ "Race/ethnicity"
+    )
+  ) |>
+  bold_labels()
+```
+
+---
+
+## Extracting Results with tidy() (Part 5)
+
+```{r}
+#| label: tidy-basics
+
+# tidy() converts model output to a data frame
+model_fit |> tidy(conf.int = TRUE)
+```
+
+```{r}
+#| label: tidy-extract
+
+# Extract just the College Grad coefficient
+model_fit |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  select(term, estimate, conf.low, conf.high, p.value)
+```
+
+---
+
+## Comparing Models with tidy() (Part 5)
+
+```{r}
+#| label: fit-two-models
+
+# Model 1: Without age adjustment
+model_crude <- lm(BPSysAve ~ Education + Gender + Race1, data = data_clean)
+
+# Model 2: With age adjustment
+model_adjusted <- lm(BPSysAve ~ Education + Gender + Race1 + Age, data = data_clean)
+```
+
+```{r}
+#| label: compare-models
+
+# Extract College Grad coefficient from both models
+crude_result <- model_crude |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  mutate(model = "Crude (no age)")
+
+adjusted_result <- model_adjusted |>
+  tidy(conf.int = TRUE) |>
+  filter(term == "EducationCollege Grad") |>
+  mutate(model = "Age-adjusted")
+
+# Combine into comparison table
+comparison <- bind_rows(crude_result, adjusted_result) |>
+  select(model, estimate, conf.low, conf.high, p.value)
+
+comparison
+```
+
+### Visualize the Comparison
+
+```{r}
+#| label: fig-comparison
+#| fig-cap: "Comparison of crude and age-adjusted estimates for College Grad vs 8th Grade"
+#| fig-width: 6
+#| fig-height: 3
+
+comparison |>
+  ggplot(aes(x = estimate, y = model)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0.2) +
+  geom_point(size = 3, color = "steelblue") +
+  labs(
+    x = "Difference in systolic BP (mmHg)\nCollege Grad vs. 8th Grade",
+    y = NULL
+  ) +
+  theme_minimal(base_size = 12)
+```
+
+### Publication-Ready Comparison Table
+
+```{r}
+#| label: tbl-comparison
+#| tbl-cap: "Comparison of crude and age-adjusted estimates for education-BP association"
+
+comparison |>
+  gt() |>
+  fmt_number(columns = c(estimate, conf.low, conf.high), decimals = 1) |>
+  fmt_number(columns = p.value, decimals = 3) |>
+  cols_merge(
+    columns = c(conf.low, conf.high),
+    pattern = "({1}, {2})"
+  ) |>
+  cols_label(
+    model = "Model",
+    estimate = "β",
+    conf.low = "95% CI",
+    p.value = "P-value"
+  )
+```
+
+---
+
+## Subgroup Analysis (Parts 4-5)
+
+### Define Function for Both Models
+
+```{r}
+#| label: define-fit-models
+
+# Function to fit Crude + Adjusted models and return both results
+fit_models <- function(data) {
+  # Skip if sample size is too small
+  if (nrow(data) < 30) {
+    return(tibble(
+      model = c("Crude", "Adjusted"),
+      estimate = NA_real_,
+      conf.low = NA_real_,
+      conf.high = NA_real_,
+      n = nrow(data)
+    ))
+  }
+
+  # Crude model (no age adjustment)
+  crude <- lm(BPSysAve ~ Education, data = data) |>
+    tidy(conf.int = TRUE) |>
+    filter(term == "EducationCollege Grad") |>
+    mutate(model = "Crude")
+
+  # Age-adjusted model
+  adjusted <- lm(BPSysAve ~ Education + Age, data = data) |>
+    tidy(conf.int = TRUE) |>
+    filter(term == "EducationCollege Grad") |>
+    mutate(model = "Adjusted")
+
+  # Return both results with sample size
+  bind_rows(crude, adjusted) |>
+    mutate(n = nrow(data))
+}
+```
+
+### Run Analysis for Overall + Gender Subgroups
+
+```{r}
+#| label: run-subgroup-analysis
+
+# Overall results
+overall_results <- data_clean |>
+  fit_models() |>
+  mutate(subgroup = "Overall")
+
+# Results by Gender using nest() + map()
+gender_results <- data_clean |>
+  group_by(Gender) |>
+  nest() |>
+  mutate(results = map(data, fit_models)) |>
+  unnest(results) |>
+  mutate(subgroup = str_to_title(Gender)) |>
+  select(-data, -Gender)
+
+# Combine all results
+all_results <- bind_rows(overall_results, gender_results)
+
+all_results
+```
+
+### Reshape with pivot_wider()
+
+```{r}
+#| label: pivot-results
+
+table_wide <- all_results |>
+  mutate(
+    # Format estimate with 95% CI
+    estimate_ci = sprintf("%.1f (%.1f, %.1f)", estimate, conf.low, conf.high)
+  ) |>
+  select(subgroup, n, model, estimate_ci) |>
+  distinct() |>  # Remove any duplicates
+  pivot_wider(
+    names_from = model,
+    values_from = estimate_ci
+  )
+
+table_wide
+```
+
+### Publication-Ready Subgroup Table
+
+```{r}
+#| label: tbl-subgroup
+#| tbl-cap: "Association between college education and systolic blood pressure: Overall and by sex"
+
+table_wide |>
+  # Order: Overall first, then alphabetical
+  mutate(subgroup = factor(subgroup, levels = c("Overall", "Female", "Male"))) |>
+  arrange(subgroup) |>
+  gt() |>
+  tab_spanner(
+    label = "Crude",
+    columns = Crude,
+    id = "spanner_crude"
+  ) |>
+  tab_spanner(
+    label = "Age-adjusted",
+    columns = Adjusted,
+    id = "spanner_adjusted"
+  ) |>
+  cols_label(
+    subgroup = "",
+    n = "N",
+    Crude = "β (95% CI)",
+    Adjusted = "β (95% CI)"
+  ) |>
+  cols_align(align = "center", columns = c(n, Crude, Adjusted)) |>
+  tab_footnote(
+    footnote = "Reference: ≤8th Grade education"
+  )
+```
+
+### Forest Plot
+
+```{r}
+#| label: fig-subgroup
+#| fig-cap: "Association between college education and systolic blood pressure by subgroup"
+#| fig-width: 7
+#| fig-height: 4
+
+all_results |>
+  filter(!is.na(estimate)) |>
+  mutate(
+    subgroup = factor(subgroup, levels = c("Male", "Female", "Overall")),
+    model = factor(model, levels = c("Crude", "Adjusted"))
+  ) |>
+  ggplot(aes(x = estimate, y = subgroup, color = model, shape = model)) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_errorbarh(
+    aes(xmin = conf.low, xmax = conf.high),
+    height = 0.2,
+    position = position_dodge(width = 0.4)
+  ) +
+  geom_point(size = 3, position = position_dodge(width = 0.4)) +
+  scale_color_manual(values = c("Crude" = "steelblue", "Adjusted" = "darkorange")) +
+  labs(
+    x = "Difference in systolic BP (mmHg)\nCollege Grad vs. ≤8th Grade",
+    y = NULL,
+    color = "Model",
+    shape = "Model"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "bottom")
+```
+
+---
+
+## Save Results (Part 5)
+
+```{r}
+#| label: save-results
+
+# Save the age-adjusted model (for Part 6)
+saveRDS(model_adjusted, here("results", "model_fit.rds"))
+
+# Save the comparison table (for Part 6)
+saveRDS(comparison, here("results", "model_comparison.rds"))
+```
+
+---
+
+## Summary
+
+### Part 4: DRY Coding
+
+- **`fit_education_model()`**: Reusable function for any outcome variable
+- **`map()`**: Iterate over multiple outcomes (BPSysAve, BMI)
+- **`fit_model_by_group()`**: Run stratified analysis by any grouping variable
+
+### Part 5: Tables & Figures
+
+- **Table 1**: Demographics by education level (`tbl-demographics`, `tbl-demographics-custom`)
+- **Figure 1**: Box plot of blood pressure by education (`fig-bp-education`)
+- **Table 2**: Regression results (`tbl-regression`)
+- **Model comparison**: Crude vs age-adjusted (`fig-comparison`, `tbl-comparison`)
+- **Subgroup analysis**: Forest plot and table by gender (`fig-subgroup`, `tbl-subgroup`)
+
+All results are saved to `results/` for use in the manuscript.

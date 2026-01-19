@@ -1,0 +1,233 @@
+---
+title: "Part 7: Collaboration"
+subtitle: "Work with Git users and Word users"
+---
+
+## Learning Goals
+
+By the end of this section, you will:
+
+- Share your work on GitHub
+- Collaborate with others who use Git
+- Work with co-authors who prefer Word
+- Use Track Changes effectively
+
+## Two Collaboration Scenarios
+
+- **Git Users** — Use GitHub: clone, push, pull. Everyone sees the full history.
+- **Word Users** — Render to `.docx`, receive Track Changes, apply edits back to qmd.
+
+---
+
+# Part 7a: GitHub Collaboration
+
+## Why GitHub?
+
+- Store your repository online (backup!)
+- Share with collaborators
+- Everyone sees the history
+- No more emailing files back and forth
+
+```{mermaid}
+flowchart LR
+    subgraph Local["Your Computer"]
+        A["Git Repository"]
+    end
+
+    subgraph Cloud["GitHub"]
+        B["Remote Repository"]
+    end
+
+    A -->|"push"| B
+    B -->|"pull"| A
+    B -->|"clone"| C["Collaborator's Computer"]
+    C -->|"push"| B
+```
+
+**Git** = version control tool (local) | **GitHub** = website to share Git repositories (online)
+
+::: {.callout-tip}
+## You're already on GitHub!
+In the [Setup Guide](../setup.qmd), you created your repository from the template and pushed your work to GitHub. Now let's collaborate!
+:::
+
+---
+
+## Self-Study: GitHub Collaboration {#github-collab-self-study}
+
+::: {.callout-note}
+## Self-Study Section
+This exercise is best done with a **colleague or classmate** after the workshop. It takes about 10-15 minutes and teaches real-world Git collaboration.
+:::
+
+::: {.callout-tip collapse="true"}
+## Pair Exercise: Collaborate via GitHub (Click to expand)
+
+::: {.step-card}
+#### Find a partner and collaborate
+
+**Setup:**
+
+1. Share your GitHub repository URL with a partner
+2. Go to your repository → **Settings** → **Collaborators**
+3. Click **Add people** and enter your partner's username
+4. Your partner accepts the invitation
+
+**Clone and edit:**
+
+1. Clone your partner's repository (green **Code** button → copy URL)
+2. In Positron: **File** → **Clone Repository** → paste URL
+3. Open their `index.qmd` and make a small edit
+4. Save, stage, and commit with a message describing your edit
+5. Click **Push**
+
+**See the result:**
+
+1. Check GitHub — you can see your partner's commit
+2. In your own repo, click **Pull** to get their changes
+:::
+:::
+
+---
+
+## Beyond Today: Branches & Pull Requests
+
+In larger teams:
+
+1. Create a **branch** for your changes
+2. Open a **Pull Request** (PR) for review
+3. Team reviews and discusses
+4. **Merge** after approval
+
+Today we used a simplified workflow (direct push to main). In practice, branches prevent conflicts and allow code review.
+
+---
+
+# Part 7b: Working with Word Users
+
+## The Reality
+
+- Not all collaborators use Git
+- Co-authors often prefer Word
+- Track Changes is the standard for feedback
+    - Unfortunately, there is no single principled way to work seamlessly between Word documents with tracked changes and qmd files (yet)
+
+## The Bare Minimum Workflow
+
+::: {.callout-important}
+## Single Source of Truth
+**qmd is always the "source"**
+
+Word documents are output, not source. Changes should flow back to qmd.
+:::
+
+## The Word Collaboration Workflow
+
+```{mermaid}
+flowchart TD
+    A["index.qmd"] -->|"render"| B[".docx"]
+    B -->|"send"| C["Co-author"]
+    C -->|"Track Changes"| D["feedback.docx"]
+    D -->|"review"| E["You"]
+    E -->|"edit"| A
+    A -->|"re-render"| F["Updated .docx"]
+```
+
+**Never edit the Word file as source!** Your edits will be lost on next render.
+
+## Best Practice: One Sentence Per Line
+
+In your qmd file:
+
+```markdown
+This is the first sentence.
+This is the second sentence.
+Each sentence on its own line.
+```
+
+**Benefits:**
+
+- Easier to match Word changes back to qmd
+- Better Git diffs (see exactly which sentence changed)
+
+---
+
+## Hands-on: Word Collaboration Cycle
+
+::: {.step-card}
+#### Step 1: Render to Word
+
+1. Open `index.qmd`
+2. Render to `.docx` format
+3. Find the Word file in your project folder
+:::
+
+::: {.step-card}
+#### Step 2: Simulate co-author feedback
+
+Open the Word file and add some Track Changes:
+
+- Suggest a wording change in the introduction
+- Add a comment asking a question
+
+Save the file with a new name: `manuscript_coauthor_feedback.docx`
+:::
+
+::: {.step-card}
+#### Step 3: Review and incorporate changes
+
+1. Open the Word file with Track Changes
+2. For each change:
+   - Manually apply the changes to the qmd file.
+      - You can use `pandoc` to convert the Word file back to markdown and apply the changes to the qmd file, but it could change formatting.
+      - You can also use AI to reflect the suggested changes in the Word file to the qmd file, but always verify nothing is missed.
+      - **Manually applying the changes is recommended for learning purposes.**
+3. For each comment:
+    - Use GitHub issues
+    - Or use the GitHub pull request comments and review functionality
+        - This requires you create a separate git branch for the changes.
+4. Re-render and verify
+:::
+
+::: {.step-card}
+#### Step 4: Commit your progress
+
+Don't forget to save your work with Git!
+
+1. Go to **Source Control** panel
+2. Stage `index.qmd`
+3. Write a descriptive commit message (e.g., "Incorporate co-author feedback from Word review")
+4. Click **Commit**
+
+::: {.callout-tip}
+## Good commit messages for collaboration
+- "Add co-author edits from Track Changes review"
+- "Incorporate advisor feedback on introduction"
+- "Apply reviewer comments on methods section"
+:::
+:::
+
+---
+
+## AI for Track Changes
+
+Speed up your review:
+
+- AI can summarize many changes quickly
+- "What are the main suggestions in this document?"
+- Helpful for long documents with many comments
+
+**Caution:** Always verify nothing is missed.
+
+---
+
+## Summary
+
+| Collaborator type | Workflow |
+|-------------------|----------|
+| Uses Git | Branch, edit, push, pull |
+| Uses Word only | Render → Track Changes → apply to qmd |
+
+Both workflows keep **qmd as the single source of truth**.
+
+← [Part 6: Quarto Manuscripts](part6.qmd) | [Part 8: Wrap-up](part8.qmd) →

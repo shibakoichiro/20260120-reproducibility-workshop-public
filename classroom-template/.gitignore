@@ -1,0 +1,18 @@
+# Quarto
+/.quarto/
+/_freeze/
+/_manuscript/
+*_cache/
+
+# R
+.Rhistory
+.Rdata
+.RDataTmp
+*.Rproj.user/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Note: Generated output (_manuscript/) is ignored
+# Students should run 'quarto render' to generate output locally

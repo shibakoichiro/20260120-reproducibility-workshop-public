@@ -1,0 +1,202 @@
+---
+title: "Part 2: Project Setup & Git Basics"
+subtitle: "Version control for your entire project"
+---
+
+## Our Project Today
+
+Throughout this workshop, we'll work with a real dataset:
+
+- **Data**: NHANES (National Health and Nutrition Examination Survey)
+- **Goal**: Build a reproducible analysis report and manuscript
+
+::: {.callout-tip}
+## You're already set up!
+In the [Setup Guide](../setup.qmd), you created your repository from a template, cloned it locally, and made your first commit. Now let's understand what you did and why it matters.
+:::
+
+## What is Git?
+
+Git is **version control** for your entire project — think of it as "Track Changes" but for all your files, not just Word documents.
+
+### The Basic Workflow
+
+```{mermaid}
+flowchart LR
+    A[Edit files] --> B[Stage changes]
+    B --> C[Commit]
+    C --> A
+```
+
+| Step | What it does | Analogy |
+|------|--------------|---------|
+| **Edit** | Make changes to your files | Write your draft |
+| **Stage** | Select which changes to include | Decide what goes in this "snapshot" |
+| **Commit** | Save a snapshot with a message | Take the photo with a caption |
+
+## Why This Matters
+
+Version control solves real problems:
+
+- **Every change is recorded** — See exactly what changed, when, and why
+- **You can always go back** — Made a mistake? Just restore from a previous version
+- **No more naming chaos** — Say goodbye to `final_v2_FINAL_really_final.docx`
+- **AI-powered learning** — Use AI to identify patterns and review your thought process from commit history
+
+## Git Concepts
+
+### Repository (Repo)
+Your project folder, tracked by Git. Contains all your files and their complete history.
+
+::: {.callout-important}
+## One Project = One Repository
+Each paper or analysis project should have its own self-contained repository with code, documents, and data references together. Avoid structures where multiple projects share files from external folders — this breaks reproducibility when paths change or files move.
+:::
+
+### Commit
+A snapshot of your project at a point in time. Each commit has:
+- A unique ID (hash)
+- A message describing the changes
+- A timestamp
+- The author
+
+The **Diff View** lets you visualize exactly what changed between any two commits — which lines were added, modified, or deleted. This is invaluable for understanding your project's evolution.
+
+### Staging Area
+A holding area for changes you want to include in your next commit. This lets you commit related changes together.
+
+### .gitignore
+A special file that tells Git which files to **ignore** — they won't be tracked or shared. Use this for:
+
+- **Sensitive data** — API keys, passwords, patient identifiers
+- **Large data files** — Raw datasets that shouldn't be in version control
+- **Temporary files** — Cache, logs, or intermediate files you don't need to keep
+
+Example `.gitignore`:
+
+```{.bash filename=".gitignore"}
+# Sensitive files
+.env
+credentials.json
+
+# Large data
+data/raw/*.csv
+
+# Temporary files
+.Rhistory
+*.log
+```
+
+::: {.callout-warning}
+## Sensitive Data
+Never commit files containing passwords, API keys, or identifiable patient data. Once pushed to GitHub, they remain in the history even if deleted later.
+:::
+
+## Using Git in Positron
+
+You don't need to memorize commands! Positron has a visual interface:
+
+::: {.step-card}
+#### The Source Control Panel
+
+1. Look for the **Source Control** icon in the left sidebar (it looks like branches)
+2. You'll see:
+   - **Changes** — files you've modified
+   - **Staged Changes** — files ready to commit
+
+#### Making a Commit
+
+1. Make changes to a file and save
+2. In Source Control, click **+** next to the file to stage it
+3. Type a commit message describing your changes
+4. Click **Commit**
+:::
+
+## Good Commit Messages
+
+A good commit message explains **why**, not just **what**:
+
+| Good | Not as good |
+|------|-------------|
+| `Add age filter to include only adults` | `Update code` |
+| `Fix typo in regression formula` | `Fix` |
+| `Add demographics table with gtsummary` | `Changes` |
+
+::: {.callout-tip}
+## Keep it short but meaningful
+Aim for messages that would help "future you" understand what you did and why.
+:::
+
+::: {.callout-note}
+## AI Can Help Write Commit Messages
+AI tools can analyze your staged changes and suggest descriptive commit messages. This makes maintaining good commit history easier — especially when you've made many small changes and need help summarizing them.
+:::
+
+## Git vs GitHub
+
+These are related but different:
+
+| Git | GitHub |
+|-----|--------|
+| Local tool on your computer | Website for sharing repositories |
+| Tracks changes in your project | Hosts your repository online |
+| Works offline | Requires internet |
+| Free and open source | Free for public repos, paid for some features |
+
+```{mermaid}
+flowchart TB
+    subgraph local1["💻 Your Computer"]
+        git1["Git Repository"]
+    end
+    subgraph cloud["☁️ GitHub"]
+        remote["Remote Repository"]
+    end
+    subgraph local2["💻 Lab Computer"]
+        git2["Git Repository"]
+    end
+    subgraph collab["👥 Collaborator"]
+        git3["Git Repository"]
+    end
+
+    git1 <-->|push/pull| remote
+    remote <-->|push/pull| git2
+    remote <-->|push/pull| git3
+```
+
+In this workshop:
+- **Git** manages version control locally
+- **GitHub** stores your work online (backup + collaboration)
+
+## Quick Reference
+
+### Common Operations in Positron GUI
+
+| To do this... | Do this... |
+|---------------|------------|
+| Stage a file | Click **+** next to the file |
+| Stage all files | Click **+** at the top of Changes |
+| Unstage a file | Click **−** next to the staged file |
+| Commit | Type message, click **Commit** |
+| Push to GitHub | Click **Push** (or sync icon) |
+| Pull from GitHub | Click **Pull** |
+
+### Common Terminal Commands (for reference)
+
+```bash
+git status           # See what's changed
+git add filename     # Stage a file
+git add .            # Stage all changes
+git commit -m "msg"  # Commit with message
+git log --oneline    # See commit history
+git push             # Send commits to GitHub
+git pull             # Get commits from GitHub
+```
+
+::: {.callout-note}
+## You don't need the terminal (for now)
+The Positron GUI handles all common operations. When we use terminal commands in [Part 5](part5.qmd#the-advisor-experience), you'll learn about working directories and how Positron makes this easy.
+:::
+
+---
+
+← [Part 1: Why Reproducibility?](part1.qmd) | [Part 3: Quarto Basics](part3.qmd) →

@@ -1,0 +1,426 @@
+---
+title: "Workshop Setup Guide"
+subtitle: "Reproducible Research Workflow Workshop (January 20, 2026)"
+date: "January 09, 2026"
+author:
+  - name: Koichiro Shiba
+    email: "kshiba@bu.edu"
+    affiliation: "Department of Epidemiology, Boston University School of Public Health"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    toc-title: "Contents"
+    theme: flatly
+    code-copy: true
+    embed-resources: true
+    title-block-style: default
+---
+
+::: {.callout-warning}
+## Complete by: January 18, 2026
+Please finish this setup **at least 2 days before** the workshop so we can help if issues arise.
+:::
+
+**Estimated time:** 30-45 minutes
+
+## Overview
+
+### What You'll Install
+
+| Software | Purpose | Time |
+|----------|---------|------|
+| R | Statistical computing | 5 min |
+| Positron | Code editor (IDE) | 5 min |
+| Quarto | Document authoring | 3 min |
+| Git | Version control | 5 min |
+| GitHub | Cloud hosting | 10 min |
+| R packages | Data analysis tools | 10 min |
+
+### Progress Checklist
+
+Print this page or copy this checklist to track your progress:
+
+- [ ] **Step 1:** R installed
+- [ ] **Step 2:** Positron installed (or alternative IDE)
+- [ ] **Step 3:** Quarto installed
+- [ ] **Step 4:** Git installed and configured
+- [ ] **Step 5:** GitHub account created and connected
+- [ ] **Step 6:** R packages installed
+- [ ] **Step 7:** Workshop repository created and setup check completed
+
+## Step 1: Install R
+
+::: {.panel-tabset}
+
+### Windows
+
+1. Go to <https://cran.r-project.org/>
+2. Click **"Download R for Windows"** → **"base"**
+3. Click **"Download R-4.x.x for Windows"**
+4. Run the `.exe` file with default settings
+
+### Mac
+
+1. Go to <https://cran.r-project.org/>
+2. Click **"Download R for macOS"**
+3. Download the correct version:
+   - **Apple Silicon (M1/M2/M3/M4):** `arm64` version
+   - **Intel Mac:** `x86_64` version
+
+::: {.callout-tip}
+## Not sure which Mac you have?
+Click  → "About This Mac" → check "Chip"
+:::
+
+4. Open the `.pkg` file and install
+
+:::
+
+::: {.callout-tip collapse="false"}
+## Verify installation
+Open a terminal and run:
+
+```bash
+R --version
+```
+
+You should see `R version 4.x.x`.
+:::
+
+## Step 2: Install Positron (or Alternative IDE)
+
+An **IDE** (Integrated Development Environment) is a single app that combines the tools you need to do data analysis - typically a code editor, an R console, a file browser, and Git/version control - so you can work in one place.
+
+Positron is a modern IDE built by Posit (the organization behind RStudio). We recommend it for this workshop because of its excellent R and Quarto integration.
+
+### Positron vs RStudio (which should you use?)
+
+- **Positron**: Newer, VS Code-based IDE from Posit. Great Quarto support, strong Git integration, and works well if you also use other languages (e.g., Python). Recommended for this workshop (the instructions/screenshots will match Positron). It also has a built-in terminal and works well with AI agents.
+- **RStudio**: The classic IDE for R. Very stable and widely used. If you already use RStudio comfortably, feel free to stick with it - just make sure **Quarto** and **Git** are installed and working.
+
+::: {.callout-note}
+## Already using another IDE?
+You can use **VS Code** or other VS Code-based IDEs such as **Cursor** and **Antigravity** instead. All modern IDEs support Git integration, R, and Quarto. If you're comfortable with your current IDE, feel free to use it — just make sure Git and Quarto extensions are installed.
+:::
+
+::: {.panel-tabset}
+
+### Windows
+
+1. Go to <https://github.com/posit-dev/positron/releases>
+2. Download the latest `...-win-x64.exe`
+3. Run the installer
+
+### Mac
+
+1. Go to <https://github.com/posit-dev/positron/releases>
+2. Download:
+   - **Apple Silicon:** `...-darwin-arm64.dmg`
+   - **Intel:** `...-darwin-x64.dmg`
+3. Drag Positron to Applications
+
+::: {.callout-warning}
+## "Cannot be opened" warning?
+Go to System Settings → Privacy & Security → Click "Open Anyway"
+:::
+
+:::
+
+**First launch:**
+
+- Positron may ask to install additional components — click **Yes**
+- It should detect R automatically
+- You should see an R console at the bottom
+
+## Step 3: Install Quarto
+
+**Quarto** is a tool for writing documents that combine text and code. Instead of running your analysis in R, then copying results into Word, you write everything in one file — and Quarto generates tables, figures, and formatted text automatically.
+
+In this workshop, you'll use Quarto to create reproducible reports and manuscripts where results update automatically when your data or code changes.
+
+::: {.panel-tabset}
+
+### Windows
+
+1. Go to <https://quarto.org/docs/get-started/>
+2. Download the Windows installer (`.msi`)
+3. Run with default settings
+4. **Restart Positron**
+
+### Mac
+
+1. Go to <https://quarto.org/docs/get-started/>
+2. Download the macOS installer (`.pkg`)
+3. Run with default settings
+4. **Restart Positron**
+
+:::
+
+::: {.callout-tip collapse="false"}
+## Verify installation
+In terminal:
+
+```bash
+quarto --version
+```
+
+You should see `1.4.xxx` or higher.
+:::
+
+## Step 4: Install and Configure Git
+
+**Git** is a version control system — it tracks every change you make to your files and lets you go back to any previous version. Think of it as "unlimited undo" with a detailed history of what changed, when, and why. All this history is stored **locally on your computer**.
+
+In this workshop, you'll use Git to save checkpoints of your work. If something breaks, you can always recover a working version.
+
+::: {.panel-tabset}
+
+### Windows
+
+1. Go to <https://git-scm.com/download/win>
+2. Run the downloaded installer
+3. **Important:** Select "Git from the command line and also from 3rd-party software"
+4. Accept other defaults
+5. **Restart Positron**
+
+### Mac
+
+The easiest way — open Terminal and run:
+
+```bash
+git --version
+```
+
+If Git isn't installed, a popup will ask to install Command Line Tools. Click **Install**.
+
+:::
+
+::: {.callout-tip collapse="false"}
+## Verify installation
+In terminal:
+
+```bash
+git --version
+```
+:::
+
+### Configure Git (Required!)
+
+Set your name and email for commit history. In terminal:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+::: {.callout-important}
+Use your real name and email — they will appear in your project history.
+:::
+
+## Step 5: Create a GitHub Account
+
+GitHub is a cloud platform for storing your Git repositories. While it's often associated with team collaboration, **it's equally valuable when working solo**:
+
+- **Backup & sync across devices** — Your full project history is safely stored in the cloud. Switch between your laptop and desktop seamlessly, or recover your work if your computer crashes.
+- **AI-assisted workflows** — Tools like GitHub Copilot and Claude Code can read your repository history, helping you understand past changes, generate commit messages, or continue where you left off.
+- **Future collaboration** — When you eventually share your work with co-authors or reviewers, everything is already set up and reproducible.
+
+Even if you never share your code, GitHub acts as a time machine for your projects.
+
+1. Go to <https://github.com>
+2. Click **"Sign up"**
+3. Enter your email, create a password, and choose a username
+4. Complete the verification process
+
+::: {.callout-tip}
+## Username tips
+Choose a professional username — it will be visible to collaborators. Many researchers use variations of their name (e.g., `jsmith`, `jane-smith-epi`).
+:::
+
+### GitHub Education (Recommended for Students)
+
+As a student (or anyone with a .edu email address), you can get **GitHub Pro for free** through GitHub Education. This includes unlimited private repositories, GitHub Copilot access, and more.
+
+1. Go to <https://education.github.com/benefits>
+2. Click **"Get student benefits"**
+3. Verify your student status using your `.edu` email or student ID
+4. Benefits are usually approved within a few days
+
+::: {.callout-note}
+GitHub Copilot (AI coding assistant) is included free with GitHub Education. It integrates directly with VS Code, Positron, and other IDEs.
+:::
+
+### Connect Git to GitHub
+
+After creating your account, you'll need to authenticate Git with GitHub. We'll use the GitHub CLI for this.
+
+1. Install GitHub CLI:
+   - **Windows:** Download from <https://cli.github.com/>
+   - **Mac:** `brew install gh` (or download from website)
+2. Run in terminal:
+
+```bash
+gh auth login
+```
+
+3. Follow the prompts (select GitHub.com, HTTPS, and authenticate via browser)
+
+## Step 6: Install R Packages
+
+Open Positron and run in the R console:
+
+```r
+install.packages(c(
+  "tidyverse",
+  "gtsummary",
+  "gt",
+  "broom",
+  "here",
+  "NHANES",
+  "rmarkdown",
+  "knitr"
+))
+```
+
+| Package | Purpose |
+|---------|---------|
+| tidyverse | Data manipulation and visualization |
+| gtsummary | Publication-ready summary tables |
+| gt | Table formatting |
+| broom | Tidy model output |
+| here | File path management |
+| NHANES | Workshop dataset (NHANES 2009-2012) |
+| rmarkdown, knitr | Document rendering |
+
+This takes 5-10 minutes. Warnings during installation are normal.
+
+::: {.callout-tip collapse="false"}
+## Verify installation
+
+```r
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(broom)
+library(NHANES)
+```
+See if these packages load without errors.
+:::
+
+## Step 7: Create Your Workshop Repository
+
+This is the final verification that everything works together. You'll create your own repository from a template and test your setup.
+
+### 1. Create repository from template
+
+1. Go to the [template repository](https://github.com/shibakoichiro/reproducible-research-workshop-shiba-template)
+2. Click the green **"Use this template"** button → **"Create a new repository"**
+3. Settings:
+   - **Owner:** Your GitHub account
+   - **Repository name:** `reproducible-workflow-workshop` (or any name you prefer)
+   - **Visibility:** Public or Private (either works)
+4. Click **"Create repository"**
+
+::: {.callout-tip}
+## Why "Use this template" instead of Fork?
+Template creates a fresh repository with no connection to the original — perfect for starting your own project. Fork is for contributing back to someone else's project.
+:::
+
+### 2. Clone the repository
+
+1. On your new repository page, click the green **"Code"** button
+2. Copy the HTTPS URL
+3. In Positron: **Source Control** panel → **Clone Repository**
+4. Paste the URL and choose a location on your computer (e.g., `Documents/`)
+5. Click **Clone** → **Open** when prompted
+
+### 3. Complete the setup check
+
+1. Open `setup-check.qmd` in Positron
+2. Replace `"YOUR NAME"` with your actual name
+3. Click **Preview** (top-left of editor) to render the document
+4. Verify the HTML output is created without errors
+
+### 4. Commit and push
+
+1. Go to **Source Control** panel (left sidebar, branch icon)
+2. You should see changed files listed
+3. Hover over each file and click **+** to stage, or click **+** next to "Changes" to stage all
+4. Enter commit message: `Complete setup check`
+5. Click **Commit**
+6. Click **Sync Changes** (or **Push**)
+
+::: {.callout-note}
+## First push?
+Git may ask you to authenticate with GitHub. Follow the prompts — this is a one-time setup.
+:::
+
+### 5. Verify on GitHub
+
+1. Go to your repository on GitHub (refresh the page)
+2. Confirm that `setup-check.qmd` shows your name
+3. Confirm that `setup-check.html` was also pushed
+
+::: {.callout-tip}
+## All steps worked?
+You're ready for the workshop! You've just completed your first Git workflow: **edit → commit → push**.
+:::
+
+## Optional: AI Assistants
+
+AI tools can support many parts of your research workflow — **not required** for this workshop, but increasingly useful.
+
+### How AI Can Help Your Research Workflow
+
+| Task | How AI helps |
+|------|--------------|
+| **Writing & editing** | Draft methods sections, improve clarity, check grammar |
+| **Code** | Write R code, debug errors, explain unfamiliar functions |
+| **Quarto** | Generate YAML options, fix formatting issues, create templates |
+| **Git** | Write commit messages, explain merge conflicts, suggest workflows |
+| **Learning** | Explain concepts, walk through examples, answer "how do I...?" questions |
+
+### Two Ways to Use AI
+
+| Type | How it works | Example |
+|------|--------------|---------|
+| **Chat** | Open a website, ask questions, copy-paste text or code | ChatGPT, Claude.ai, Gemini |
+| **Agent** | AI runs inside your editor, reads your files, and makes edits directly | GitHub Copilot CLI, Claude Code, Gemini CLI, Codex|
+
+::: {.callout-note}
+## Which should you use?
+**Chat** is the easiest way to start — just open a browser and ask questions. **Agents** are more powerful because they can see your entire project and make changes directly, but require setup.
+:::
+
+### Chat-Based AI
+
+Use AI through a web browser. You copy-paste text, code, or error messages, and the AI responds with suggestions.
+
+- **ChatGPT** (<https://chat.openai.com>) 
+- **Claude** (<https://claude.ai>) 
+- **Gemini** (<https://gemini.google.com>) 
+    - A 1-year free premium plan for students ([Google AI Pro](https://gemini.google/students/))
+
+Good for: Quick questions, editing prose, debugging error messages, learning new concepts.
+
+### Agent-Based AI
+
+AI that works directly with your files. It can read your documents and code, understand context, and make edits — no copy-pasting needed.
+
+- **GitHub Copilot CLI** — Free for students (GitHub Education)
+- **Codex** — OpenAI's agent
+- **Gemini CLI** — Free for students (Google AI Pro; 1 year)
+- **Claude Code** — Anthropic's agent
+- **Cursor** — Free for students (1 year)
+
+These tools run inside your IDE as extensions, in the terminal, or as built-in features.
+
+::: {.callout-tip}
+## Free options for students
+**GitHub Copilot CLI** (via GitHub Education), **Cursor** (1 year free), and **Gemini CLI** (via Google AI Pro) are all free with student verification.
+:::
+
+### Bottom Line
+
+Start with chat if you're new to AI tools. Move to agents when you want AI to work more directly with your project files.

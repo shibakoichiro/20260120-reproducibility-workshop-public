@@ -1,0 +1,7 @@
+/.quarto/
+/_manuscript/
+/_freeze/
+*_files/
+/results/
+.DS_Store
+.here

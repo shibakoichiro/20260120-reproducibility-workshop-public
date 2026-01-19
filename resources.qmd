@@ -1,0 +1,65 @@
+---
+title: "Resources"
+subtitle: "Continue your reproducibility journey"
+author:
+  - name: Koichiro Shiba
+    email: "kshiba@bu.edu"
+    affiliation: "Department of Epidemiology, Boston University School of Public Health"
+date: "January 20, 2026"
+toc: true
+---
+
+## More Examples
+
+See more examples that demonstrate how the techniques/principles from this workshop can be applied in practice:
+
+::: {.grid-2}
+::: {.resource-card}
+::: {.content}
+#### [NHANES Manuscript Example](examples/nhanes-manuscript/)
+A complete Quarto Manuscripts project demonstrating `{{< embed >}}` syntax, script-based tables, and reproducible figures. Notice that the project is for demonstration purposes only, and **the content itself is not scientifically meaningful.** View the [source folder on GitHub](https://github.com/shibakoichiro/20260120-reproducibility-workshop-public/tree/main/examples/nhanes-manuscript).
+:::
+:::
+
+::: {.resource-card}
+::: {.content}
+#### [Quantitative Bias Analysis](examples/Bias_analysis_reproducible.html)
+A practical application: custom R functions combined with `purrr::map()` to iterate bias analysis across multiple scenarios. Demonstrates real-world use of workshop concepts. View the [source file on GitHub](https://github.com/shibakoichiro/20260120-reproducibility-workshop-public/blob/main/examples/Bias_analysis_reproducible.html).
+:::
+:::
+:::
+
+## Keep Learning
+
+### Core Tools
+
+| Resource | What You'll Learn |
+|----------|-------------------|
+| [Quarto Documentation](https://quarto.org) | Documents, presentations, websites, manuscripts |
+| [Happy Git with R](https://happygitwithr.com) | Git setup, workflows, troubleshooting for R users |
+| [gtsummary](https://www.danieldsjoberg.com/gtsummary/) | Publication-ready summary and regression tables |
+| [ggplot2 Book](https://ggplot2-book.org/) | The complete guide to the grammar of graphics |
+
+### Advanced Topics
+
+| Resource | When to Explore |
+|----------|-----------------|
+| [targets User Manual](https://books.ropensci.org/targets/) | When your projects have complex dependencies |
+| [Oh Shit, Git!?!](https://ohshitgit.com/) | When you need to fix Git mistakes |
+| [Quarto Gallery](https://quarto.org/docs/gallery/) | When you want inspiration for new formats |
+
+## Using AI Effectively
+
+- Learn how to use CLI agent tools
+  - Integrate them into your IDE tools
+  - Connect them to your GitHub repository
+
+- Learn how to use AI to help with your research workflow
+  - Consider which tasks to delegate to AI
+  - Learn "AI fluency" via [Anthropic Academy courses](https://anthropic.skilljar.com/) (highly recommended!)
+
+---
+
+## Questions?
+
+Contact the instructor: [kshiba@bu.edu](mailto:kshiba@bu.edu)

@@ -1,0 +1,60 @@
+---
+title: "Setup Check"
+author: "YOUR NAME"
+date: today
+format: html
+---
+
+## Instructions
+
+1. Replace `"YOUR NAME"` above with your actual name
+2. Render this document (Ctrl+Shift+K or Cmd+Shift+K)
+3. If successful, commit and push this file (the rendered output is ignored by Git)
+
+## Environment Check
+
+The code below verifies that your R packages are installed correctly.
+
+```{r}
+#| message: false
+
+# Load required packages
+library(tidyverse)
+library(gtsummary)
+library(gt)
+library(here)
+library(NHANES)
+```
+
+If the above runs without errors, your packages are correctly installed.
+
+## Quick Test
+
+```{r}
+#| tbl-cap: "Baseline characteristics of NHANES participants"
+
+NHANES |>
+  select(Age, Gender, BMI, BPSysAve) |>
+  head(100) |>
+  tbl_summary(
+    by = Gender,
+    statistic = list(all_continuous() ~ "{mean} ({sd})"),
+    missing = "no"
+  )
+```
+
+## Session Info
+
+```{r}
+sessionInfo()
+```
+
+## Confirmation
+
+After rendering this document:
+
+- [ ] The HTML file was created without errors
+- [ ] The table above displays correctly
+- [ ] I have committed and pushed my changes to the `.qmd` file
+
+**You're ready for the workshop!**

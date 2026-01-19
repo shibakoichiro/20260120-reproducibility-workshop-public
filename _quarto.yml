@@ -1,0 +1,63 @@
+project:
+  type: website
+  output-dir: docs
+  render:
+    - index.qmd
+    - setup.qmd
+    - slides/slides.qmd
+    - resources.qmd
+    - parts/*.qmd
+
+website:
+  title: "Reproducible Research Workflow"
+
+  navbar:
+    background: primary
+    left:
+      - href: index.qmd
+        text: Home
+      - href: setup.qmd
+        text: Setup
+      - text: Workshop Parts
+        menu:
+          - text: "Part 1: Why Reproducibility?"
+            href: parts/part1.qmd
+          - text: "Part 2: Project Setup & Git"
+            href: parts/part2.qmd
+          - text: "Part 3: Quarto Basics"
+            href: parts/part3.qmd
+          - text: "Part 4: DRY Coding"
+            href: parts/part4.qmd
+          - text: "Part 5: Tables & Figures"
+            href: parts/part5.qmd
+          - text: "Part 6: Quarto Manuscripts"
+            href: parts/part6.qmd
+          - text: "Part 7: Collaboration"
+            href: parts/part7.qmd
+          - text: "Part 8: Wrap-up"
+            href: parts/part8.qmd
+          - text: "---"
+          - text: "Opening Slides"
+            href: slides/slides.qmd
+      - href: resources.qmd
+        text: Resources
+    right:
+      - icon: github
+        href: https://github.com/shibakoichiro/20260120-reproducibility-workshop-public
+
+  page-footer:
+    center: "© 2026 Koichiro Shiba | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | Reproducible Research Workflow Workshop"
+
+format:
+  html:
+    theme: flatly
+    toc: true
+    code-copy: true
+    code-overflow: wrap
+    highlight-style: nord
+    css: styles.css
+    mermaid:
+      theme: neutral
+
+execute:
+  freeze: auto

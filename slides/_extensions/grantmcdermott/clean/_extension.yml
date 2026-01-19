@@ -1,0 +1,20 @@
+title: clean
+author: Grant McDermott
+version: 1.3.0
+quarto-required: ">=1.3.0"
+contributes:
+  formats:
+    revealjs:
+      theme: [default, clean.scss]
+      mermaid:
+        theme: default
+        themeVariables:
+          fontSize: '24px'
+      menu:
+        side: left
+      slide-number: true
+      date-format: long
+      # include-in-header:
+      #   text: |
+      #     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+      footer: "Shiba | January 20, 2026"
